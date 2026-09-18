@@ -31442,7 +31442,7 @@ function readableText(content) {
         .replace(/!\[[^\]]*\]\([^)]*\)/g, '')
         .replace(/<img\b[^>]*>/gi, '')
         .replace(/<[^>]+>/g, '')
-        .replace(/[#>*_~\[\]()-]/g, ' ')
+        .replace(/[#>*_~[\]()-]/g, ' ')
         .replace(/\s+/g, ' ')
         .trim();
 }
@@ -64819,11 +64819,7 @@ const PACKAGE_MANAGERS = [
     }
 ];
 const NPM_FALLBACK = {
-    name: 'npm',
-    lockfile: '',
-    install: ['npm', 'install'],
-    frozenInstall: ['npm', 'install']
-};
+    install: ['npm', 'install']};
 const PNPM_DEFAULT = {
     name: 'pnpm',
     lockfile: '',
@@ -64846,7 +64842,7 @@ async function ensureUserDeps(workspacePath) {
         return true;
     info('Installing user dependencies for type resolution...');
     const detected = detectPackageManager(workspacePath);
-    let manager = detected ?? PNPM_DEFAULT;
+    const manager = detected ?? PNPM_DEFAULT;
     let command = detected ? manager.frozenInstall : manager.install;
     if (!detected) {
         warning('No lockfile found (pnpm-lock.yaml, yarn.lock, bun.lockb, bun.lock, ' +
@@ -64861,7 +64857,6 @@ async function ensureUserDeps(workspacePath) {
             `this runner. Falling back to "npm install", which ignores that ` +
             `${detected ? 'lockfile' : 'preferred default'} and may resolve different dependency versions. Add the ` +
             `matching setup step (for example pnpm/action-setup) before this action.`);
-        manager = NPM_FALLBACK;
         command = NPM_FALLBACK.install;
     }
     else if (detected) {
