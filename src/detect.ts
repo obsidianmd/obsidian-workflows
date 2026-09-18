@@ -41,8 +41,8 @@ export function isThemeManifest(data: unknown): data is ThemeManifest {
   return (
     typeof obj.name === 'string' &&
     typeof obj.version === 'string' &&
-    isOptionalString(obj.author) &&
-    isOptionalString(obj.minAppVersion) &&
+    typeof obj.author === 'string' &&
+    typeof obj.minAppVersion === 'string' &&
     isOptionalString(obj.authorUrl)
   )
 }

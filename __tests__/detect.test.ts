@@ -86,7 +86,9 @@ describe('isThemeManifest', () => {
     expect(
       isThemeManifest({
         name: 'My Theme',
-        version: '1.0.0'
+        version: '1.0.0',
+        author: 'Author',
+        minAppVersion: '0.16.0'
       })
     ).toBe(true)
   })

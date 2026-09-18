@@ -1,11 +1,12 @@
 import * as fs from 'node:fs'
 import * as os from 'node:os'
 import * as path from 'node:path'
+import { pathToFileURL } from 'node:url'
 import * as core from '@actions/core'
 import * as exec from '@actions/exec'
 import { ensureUserDeps } from './deps.js'
 import { readManifest } from './detect.js'
-import type { ProjectType, ValidationResult } from './types.js'
+import type { Finding, PolicySeverity, ProjectType } from './types.js'
 
 const SCANNER_STYLELINT_CONFIG = {
   plugins: ['stylelint-no-unsupported-browser-features'],
@@ -179,6 +180,174 @@ const SCANNER_ESLINT_DEPS: Record<string, string> = {
   'typescript-eslint': '8.61.1'
 }
 
+function relativeFile(workspacePath: string, filePath: string): string {
+  return path.normalize(
+    path.isAbsolute(filePath)
+      ? path.relative(workspacePath, filePath)
+      : filePath
+  )
+}
+
+function isRecord(value: unknown): value is Record<string, unknown> {
+  return typeof value === 'object' && value !== null
+}
+
+function optionalNumber(value: unknown): number | undefined {
+  return typeof value === 'number' ? value : undefined
+}
+
+export function parseStylelintOutput(
+  stdout: string,
+  workspacePath: string
+): Finding[] {
+  const parsed: unknown = JSON.parse(stdout)
+  if (!Array.isArray(parsed))
+    throw new Error('Stylelint output is not an array.')
+
+  const findings: Finding[] = []
+  for (const result of parsed) {
+    if (!isRecord(result)) continue
+    const source = typeof result.source === 'string' ? result.source : ''
+    const warnings = Array.isArray(result.warnings) ? result.warnings : []
+    for (const warning of warnings) {
+      if (!isRecord(warning)) continue
+      const severity: PolicySeverity =
+        warning.severity === 'error' ? 'error' : 'warning'
+      findings.push({
+        ruleId:
+          typeof warning.rule === 'string'
+            ? warning.rule
+            : 'stylelint-unknown-rule',
+        enforcement: 'policy',
+        check: 'scanner-stylelint',
+        message:
+          typeof warning.text === 'string'
+            ? warning.text
+            : 'Stylelint reported an issue.',
+        severity,
+        status: 'failed',
+        coverage: 'full',
+        location: {
+          file: relativeFile(workspacePath, source),
+          startLine: optionalNumber(warning.line),
+          endLine: optionalNumber(warning.endLine),
+          startColumn: optionalNumber(warning.column),
+          endColumn: optionalNumber(warning.endColumn)
+        }
+      })
+    }
+
+    const parseErrors = Array.isArray(result.parseErrors)
+      ? result.parseErrors
+      : []
+    for (const parseError of parseErrors) {
+      const detail = isRecord(parseError) ? parseError : {}
+      findings.push({
+        ruleId: 'css-parse-error',
+        enforcement: 'policy',
+        check: 'scanner-stylelint',
+        message:
+          typeof detail.text === 'string'
+            ? detail.text
+            : typeof parseError === 'string'
+              ? parseError
+              : 'Stylelint could not parse this stylesheet.',
+        severity: 'error',
+        status: 'failed',
+        coverage: 'full',
+        location: {
+          file: relativeFile(workspacePath, source),
+          startLine: optionalNumber(detail.line),
+          startColumn: optionalNumber(detail.column)
+        }
+      })
+    }
+  }
+  return findings
+}
+
+type RuleDocs = { meta?: { docs?: { url?: unknown } } }
+type ObsidianPlugin = { rules?: Record<string, RuleDocs> }
+
+export function resolveEslintHelpUrl(
+  ruleId: string | null,
+  plugin: ObsidianPlugin | undefined
+): string | undefined {
+  if (!ruleId?.startsWith('obsidianmd/')) return undefined
+  const name = ruleId.slice('obsidianmd/'.length)
+  const url = plugin?.rules?.[name]?.meta?.docs?.url
+  return typeof url === 'string' && url.length > 0 ? url : undefined
+}
+
+export function parseEslintOutput(
+  stdout: string,
+  workspacePath: string,
+  plugin?: ObsidianPlugin
+): Finding[] {
+  const parsed: unknown = JSON.parse(stdout)
+  if (!Array.isArray(parsed)) throw new Error('ESLint output is not an array.')
+
+  const findings: Finding[] = []
+  for (const result of parsed) {
+    if (!isRecord(result)) continue
+    const filePath = typeof result.filePath === 'string' ? result.filePath : ''
+    const messages = Array.isArray(result.messages) ? result.messages : []
+    for (const entry of messages) {
+      if (!isRecord(entry)) continue
+      const ruleId = typeof entry.ruleId === 'string' ? entry.ruleId : null
+      const fatal = entry.fatal === true || ruleId === null
+      findings.push({
+        ruleId: fatal ? 'eslint-execution-failure' : ruleId,
+        enforcement: 'policy',
+        check: 'scanner-eslint',
+        message:
+          typeof entry.message === 'string'
+            ? entry.message
+            : 'ESLint reported an issue.',
+        severity: fatal
+          ? 'recommendation'
+          : entry.severity === 2
+            ? 'error'
+            : 'warning',
+        status: fatal ? 'inconclusive' : 'failed',
+        coverage: fatal ? 'unavailable' : 'full',
+        location: {
+          file: relativeFile(workspacePath, filePath),
+          startLine: optionalNumber(entry.line),
+          endLine: optionalNumber(entry.endLine),
+          startColumn: optionalNumber(entry.column),
+          endColumn: optionalNumber(entry.endColumn)
+        },
+        helpUrl: resolveEslintHelpUrl(ruleId, plugin)
+      })
+    }
+  }
+  return findings
+}
+
+function findCssFiles(directory: string, workspacePath = directory): string[] {
+  const ignored = new Set([
+    'node_modules',
+    'dist',
+    'build',
+    '.git',
+    '.obsidian'
+  ])
+  const files: string[] = []
+  for (const entry of fs.readdirSync(directory, { withFileTypes: true })) {
+    if (entry.isDirectory()) {
+      if (!ignored.has(entry.name)) {
+        files.push(
+          ...findCssFiles(path.join(directory, entry.name), workspacePath)
+        )
+      }
+    } else if (entry.isFile() && entry.name.endsWith('.css')) {
+      files.push(path.relative(workspacePath, path.join(directory, entry.name)))
+    }
+  }
+  return files
+}
+
 async function createScannerDepsDir(
   deps: Record<string, string>
 ): Promise<string> {
@@ -205,8 +374,8 @@ async function createScannerDepsDir(
   return tempDir
 }
 
-async function runUserLint(workspacePath: string): Promise<ValidationResult[]> {
-  const results: ValidationResult[] = []
+async function runUserLint(workspacePath: string): Promise<Finding[]> {
+  const results: Finding[] = []
 
   const pkgPath = path.join(workspacePath, 'package.json')
   if (!fs.existsSync(pkgPath)) {
@@ -234,8 +403,12 @@ async function runUserLint(workspacePath: string): Promise<ValidationResult[]> {
 
   if (exitCode !== 0) {
     results.push({
+      ruleId: 'user-lint-failed',
+      enforcement: 'policy',
       message: `User lint script failed (exit code ${exitCode}).`,
       severity: 'warning',
+      status: 'failed',
+      coverage: 'partial',
       check: 'lint'
     })
   }
@@ -247,20 +420,45 @@ async function runScannerStylelint(
   workspacePath: string,
   projectType: ProjectType,
   minAppVersion: string | undefined
-): Promise<ValidationResult[]> {
-  const results: ValidationResult[] = []
+): Promise<Finding[]> {
+  const cssFiles =
+    projectType === 'theme'
+      ? fs.existsSync(path.join(workspacePath, 'theme.css'))
+        ? ['theme.css']
+        : []
+      : findCssFiles(workspacePath)
+
+  if (cssFiles.length === 0) {
+    core.info('No CSS files found to lint.')
+    return [
+      {
+        ruleId: 'scanner-stylelint-no-files',
+        enforcement: 'policy',
+        check: 'scanner-stylelint',
+        message: 'Scanner Stylelint skipped because no CSS files were found.',
+        severity: 'recommendation',
+        status: 'skipped',
+        coverage: 'unavailable'
+      }
+    ]
+  }
 
   core.info('Installing scanner stylelint dependencies...')
   let scannerDir: string
   try {
     scannerDir = await createScannerDepsDir(SCANNER_STYLELINT_DEPS)
   } catch {
-    results.push({
-      message: 'Failed to install scanner stylelint dependencies.',
-      severity: 'error',
-      check: 'lint'
-    })
-    return results
+    return [
+      {
+        ruleId: 'scanner-stylelint-setup-failed',
+        enforcement: 'policy',
+        message: 'Failed to install scanner stylelint dependencies.',
+        severity: 'recommendation',
+        status: 'inconclusive',
+        coverage: 'unavailable',
+        check: 'scanner-stylelint'
+      }
+    ]
   }
 
   const configPath = path.join(workspacePath, '.stylelintrc.scanner.json')
@@ -268,33 +466,20 @@ async function runScannerStylelint(
   fs.writeFileSync(configPath, JSON.stringify(config))
 
   try {
-    const targetFiles =
-      projectType === 'theme'
-        ? [path.join(workspacePath, 'theme.css')]
-        : ['**/*.css']
-
-    const existingFiles = targetFiles.filter((f) => {
-      if (f.includes('*')) return true
-      return fs.existsSync(f)
-    })
-
-    if (existingFiles.length === 0) {
-      core.info('No CSS files found to lint.')
-      return results
-    }
-
     core.info('Running scanner stylelint...')
-    const exitCode = await exec.exec(
+    const output = await exec.getExecOutput(
       'npx',
       [
         '--prefix',
         scannerDir,
         'stylelint',
-        ...existingFiles,
+        ...cssFiles,
         '--config',
         configPath,
         '--config-basedir',
-        path.join(scannerDir, 'node_modules')
+        path.join(scannerDir, 'node_modules'),
+        '--formatter',
+        'json'
       ],
       {
         cwd: workspacePath,
@@ -306,26 +491,54 @@ async function runScannerStylelint(
       }
     )
 
-    if (exitCode !== 0 && exitCode !== 2) {
-      results.push({
-        message: `Scanner stylelint failed (exit code ${exitCode}).`,
-        severity: 'error',
-        check: 'lint'
-      })
-    } else if (exitCode === 2) {
-      results.push({
-        message:
-          'Scanner stylelint found issues. Review the output above for details.',
-        severity: 'warning',
-        check: 'lint'
-      })
+    try {
+      const stylelintJson =
+        output.stderr.match(/^\s*(\[.*\])\s*$/m)?.[1] ?? output.stdout
+      const findings = parseStylelintOutput(stylelintJson, workspacePath)
+      if (findings.length > 0) return findings
+      if (output.exitCode === 0) {
+        return [
+          {
+            ruleId: 'scanner-stylelint-passed',
+            enforcement: 'policy',
+            check: 'scanner-stylelint',
+            message: 'Scanner Stylelint found no issues.',
+            severity: 'recommendation',
+            status: 'passed',
+            coverage: 'full'
+          }
+        ]
+      }
+    } catch {
+      // Report execution uncertainty rather than assigning malformed tool output to the author.
     }
+    return [
+      {
+        ruleId: 'scanner-stylelint-execution-failed',
+        enforcement: 'policy',
+        check: 'scanner-stylelint',
+        message: `Scanner Stylelint did not produce usable JSON (exit code ${output.exitCode}).`,
+        severity: 'recommendation',
+        status: 'inconclusive',
+        coverage: 'unavailable'
+      }
+    ]
+  } catch (error) {
+    return [
+      {
+        ruleId: 'scanner-stylelint-execution-failed',
+        enforcement: 'policy',
+        check: 'scanner-stylelint',
+        message: `Scanner Stylelint could not run: ${error instanceof Error ? error.message : String(error)}.`,
+        severity: 'recommendation',
+        status: 'inconclusive',
+        coverage: 'unavailable'
+      }
+    ]
   } finally {
     fs.rmSync(scannerDir, { recursive: true, force: true })
     if (fs.existsSync(configPath)) fs.unlinkSync(configPath)
   }
-
-  return results
 }
 
 function buildScannerEslintConfig(hasTsconfig: boolean): string {
@@ -482,11 +695,7 @@ export default [
 `
 }
 
-async function runScannerEslint(
-  workspacePath: string
-): Promise<ValidationResult[]> {
-  const results: ValidationResult[] = []
-
+async function runScannerEslint(workspacePath: string): Promise<Finding[]> {
   const hasTsconfig = fs.existsSync(path.join(workspacePath, 'tsconfig.json'))
 
   await ensureUserDeps(workspacePath)
@@ -496,12 +705,17 @@ async function runScannerEslint(
   try {
     scannerDir = await createScannerDepsDir(SCANNER_ESLINT_DEPS)
   } catch {
-    results.push({
-      message: 'Failed to install scanner ESLint dependencies.',
-      severity: 'error',
-      check: 'lint'
-    })
-    return results
+    return [
+      {
+        ruleId: 'scanner-eslint-setup-failed',
+        enforcement: 'policy',
+        message: 'Failed to install scanner ESLint dependencies.',
+        severity: 'recommendation',
+        status: 'inconclusive',
+        coverage: 'unavailable',
+        check: 'scanner-eslint'
+      }
+    ]
   }
 
   const configContent = buildScannerEslintConfig(hasTsconfig)
@@ -520,7 +734,7 @@ async function runScannerEslint(
       path.join(workspacePath, 'node_modules')
     ].join(path.delimiter)
 
-    const exitCode = await exec.exec(
+    const output = await exec.getExecOutput(
       'npx',
       [
         '--prefix',
@@ -528,6 +742,8 @@ async function runScannerEslint(
         'eslint',
         '--config',
         configPath,
+        '--format',
+        'json',
         '--no-error-on-unmatched-pattern',
         '.'
       ],
@@ -541,18 +757,69 @@ async function runScannerEslint(
       }
     )
 
-    if (exitCode !== 0) {
-      results.push({
-        message: `Scanner ESLint found issues (exit code ${exitCode}). Review the output above.`,
-        severity: 'warning',
-        check: 'lint'
-      })
+    let plugin: ObsidianPlugin | undefined
+    try {
+      const modulePath = path.join(
+        scannerDir,
+        'node_modules',
+        'eslint-plugin-obsidianmd',
+        'dist',
+        'index.js'
+      )
+      const loaded: unknown = await import(pathToFileURL(modulePath).href)
+      if (isRecord(loaded)) {
+        const candidate = isRecord(loaded.default) ? loaded.default : loaded
+        plugin = candidate as ObsidianPlugin
+      }
+    } catch {
+      plugin = undefined
     }
+
+    try {
+      const findings = parseEslintOutput(output.stdout, workspacePath, plugin)
+      if (findings.length > 0) return findings
+      if (output.exitCode === 0) {
+        return [
+          {
+            ruleId: 'scanner-eslint-passed',
+            enforcement: 'policy',
+            check: 'scanner-eslint',
+            message: 'Scanner ESLint found no issues.',
+            severity: 'recommendation',
+            status: 'passed',
+            coverage: 'full'
+          }
+        ]
+      }
+    } catch {
+      // Report execution uncertainty rather than assigning malformed tool output to the author.
+    }
+    return [
+      {
+        ruleId: 'scanner-eslint-execution-failed',
+        enforcement: 'policy',
+        check: 'scanner-eslint',
+        message: `Scanner ESLint did not produce usable JSON (exit code ${output.exitCode}).`,
+        severity: 'recommendation',
+        status: 'inconclusive',
+        coverage: 'unavailable'
+      }
+    ]
+  } catch (error) {
+    return [
+      {
+        ruleId: 'scanner-eslint-execution-failed',
+        enforcement: 'policy',
+        check: 'scanner-eslint',
+        message: `Scanner ESLint could not run: ${error instanceof Error ? error.message : String(error)}.`,
+        severity: 'recommendation',
+        status: 'inconclusive',
+        coverage: 'unavailable'
+      }
+    ]
   } finally {
     fs.rmSync(scannerDir, { recursive: true, force: true })
   }
-
-  return results
 }
 
 export async function runLint(
@@ -560,8 +827,8 @@ export async function runLint(
   projectType: ProjectType,
   useScannerLint: boolean,
   mode: string
-): Promise<ValidationResult[]> {
-  const results: ValidationResult[] = []
+): Promise<Finding[]> {
+  const results: Finding[] = []
   const effectiveScannerLint = mode === 'release' || useScannerLint
 
   if (!effectiveScannerLint) {

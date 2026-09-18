@@ -6,7 +6,7 @@ import * as exec from '@actions/exec'
 import { attest, buildSLSAProvenancePredicate } from '@actions/attest'
 import * as github from '@actions/github'
 import { readManifest } from './detect.js'
-import type { ProjectType, ValidationResult } from './types.js'
+import type { Finding, ProjectType } from './types.js'
 
 type SigstoreInstance = 'public-good' | 'github'
 
@@ -30,23 +30,31 @@ function computeSha256(filePath: string): string {
 export function validateReleaseAssets(
   workspacePath: string,
   projectType: ProjectType
-): ValidationResult[] {
-  const results: ValidationResult[] = []
+): Finding[] {
+  const results: Finding[] = []
 
   if (projectType === 'plugin') {
     if (!fs.existsSync(path.join(workspacePath, 'main.js'))) {
       results.push({
+        ruleId: 'release-asset-main-js-missing',
+        enforcement: 'correctness',
         message:
           'Release asset main.js not found. Did the build step complete successfully?',
         severity: 'error',
+        status: 'failed',
+        coverage: 'partial',
         check: 'release'
       })
     }
 
     if (!fs.existsSync(path.join(workspacePath, 'manifest.json'))) {
       results.push({
+        ruleId: 'release-asset-manifest-missing',
+        enforcement: 'correctness',
         message: 'Release asset manifest.json not found.',
         severity: 'error',
+        status: 'failed',
+        coverage: 'partial',
         check: 'release'
       })
     }
@@ -55,16 +63,24 @@ export function validateReleaseAssets(
   if (projectType === 'theme') {
     if (!fs.existsSync(path.join(workspacePath, 'theme.css'))) {
       results.push({
+        ruleId: 'release-asset-theme-css-missing',
+        enforcement: 'correctness',
         message: 'Release asset theme.css not found.',
         severity: 'error',
+        status: 'failed',
+        coverage: 'partial',
         check: 'release'
       })
     }
 
     if (!fs.existsSync(path.join(workspacePath, 'manifest.json'))) {
       results.push({
+        ruleId: 'release-asset-manifest-missing',
+        enforcement: 'correctness',
         message: 'Release asset manifest.json not found.',
         severity: 'error',
+        status: 'failed',
+        coverage: 'partial',
         check: 'release'
       })
     }
@@ -73,10 +89,8 @@ export function validateReleaseAssets(
   return results
 }
 
-export function validateManifestConsistency(
-  workspacePath: string
-): ValidationResult[] {
-  const results: ValidationResult[] = []
+export function validateManifestConsistency(workspacePath: string): Finding[] {
+  const results: Finding[] = []
   const tag = getTagFromRef()
 
   if (!tag) return results
@@ -89,8 +103,12 @@ export function validateManifestConsistency(
 
   if (manifestVersion && manifestVersion !== tag) {
     results.push({
+      ruleId: 'release-manifest-version-mismatch',
+      enforcement: 'policy',
       message: `manifest.json version "${manifestVersion}" does not match the release tag "${tag}".`,
       severity: 'warning',
+      status: 'failed',
+      coverage: 'partial',
       check: 'release'
     })
   }
@@ -131,14 +149,18 @@ function collectSubjects(
 export async function attestBuildArtifacts(
   workspacePath: string,
   projectType: ProjectType
-): Promise<ValidationResult[]> {
-  const results: ValidationResult[] = []
+): Promise<Finding[]> {
+  const results: Finding[] = []
   const subjects = collectSubjects(workspacePath, projectType)
 
   if (subjects.length === 0) {
     results.push({
+      ruleId: 'release-attestation-no-artifacts',
+      enforcement: 'policy',
       message: 'No artifacts found to attest.',
       severity: 'warning',
+      status: 'failed',
+      coverage: 'partial',
       check: 'release'
     })
     return results
@@ -146,9 +168,13 @@ export async function attestBuildArtifacts(
 
   if (!process.env.ACTIONS_ID_TOKEN_REQUEST_URL) {
     results.push({
+      ruleId: 'release-attestation-missing-id-token',
+      enforcement: 'policy',
       message:
         'Missing id-token permission. Add "permissions: id-token: write" to your workflow.',
       severity: 'warning',
+      status: 'failed',
+      coverage: 'partial',
       check: 'release'
     })
     return results
@@ -157,9 +183,13 @@ export async function attestBuildArtifacts(
   const token = process.env.GITHUB_TOKEN ?? ''
   if (!token) {
     results.push({
+      ruleId: 'release-attestation-missing-token',
+      enforcement: 'policy',
       message:
         'GITHUB_TOKEN not set. Attestation requires a token with attestations:write permission.',
       severity: 'warning',
+      status: 'failed',
+      coverage: 'partial',
       check: 'release'
     })
     return results
@@ -191,8 +221,12 @@ export async function attestBuildArtifacts(
   } catch (error) {
     const message = error instanceof Error ? error.message : String(error)
     results.push({
+      ruleId: 'release-attestation-failed',
+      enforcement: 'policy',
       message: `Attestation failed: ${message}. Ensure the workflow has id-token:write and attestations:write permissions.`,
       severity: 'warning',
+      status: 'failed',
+      coverage: 'partial',
       check: 'release'
     })
   }
@@ -203,15 +237,19 @@ export async function attestBuildArtifacts(
 export async function createDraftRelease(
   workspacePath: string,
   projectType: ProjectType
-): Promise<ValidationResult[]> {
-  const results: ValidationResult[] = []
+): Promise<Finding[]> {
+  const results: Finding[] = []
   const tag = getTagFromRef()
 
   if (!tag) {
     results.push({
+      ruleId: 'release-tag-required',
+      enforcement: 'correctness',
       message:
         'Cannot create release: not triggered by a tag push (GITHUB_REF does not start with refs/tags/).',
       severity: 'error',
+      status: 'failed',
+      coverage: 'partial',
       check: 'release'
     })
     return results
@@ -249,8 +287,12 @@ export async function createDraftRelease(
 
   if (exitCode !== 0) {
     results.push({
+      ruleId: 'release-draft-creation-failed',
+      enforcement: 'correctness',
       message: `Failed to create draft release (exit code ${exitCode}).`,
       severity: 'error',
+      status: 'failed',
+      coverage: 'partial',
       check: 'release'
     })
   } else {

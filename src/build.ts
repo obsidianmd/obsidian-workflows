@@ -3,7 +3,7 @@ import * as path from 'node:path'
 import * as core from '@actions/core'
 import * as exec from '@actions/exec'
 import { hasPackageJson, ensureUserDeps } from './deps.js'
-import type { ProjectType, ValidationResult } from './types.js'
+import type { Finding, ProjectType } from './types.js'
 
 const BUILD_SCRIPTS_PRIORITY = ['build', 'build:plugin', 'compile']
 
@@ -31,8 +31,8 @@ export async function runBuild(
   workspacePath: string,
   projectType: ProjectType,
   explicitBuildCommand: string
-): Promise<ValidationResult[]> {
-  const results: ValidationResult[] = []
+): Promise<Finding[]> {
+  const results: Finding[] = []
 
   if (explicitBuildCommand === 'false') {
     core.info('Build step disabled via input.')
@@ -63,8 +63,12 @@ export async function runBuild(
   const installed = await ensureUserDeps(workspacePath)
   if (!installed) {
     results.push({
+      ruleId: 'build-dependency-install-failed',
+      enforcement: 'correctness',
       message: 'Dependency installation failed.',
       severity: 'error',
+      status: 'failed',
+      coverage: 'partial',
       check: 'build'
     })
     return results
@@ -79,8 +83,12 @@ export async function runBuild(
 
   if (exitCode !== 0) {
     results.push({
+      ruleId: 'build-command-failed',
+      enforcement: 'correctness',
       message: `Build failed (exit code ${exitCode}). Command: "${buildCommand}".`,
       severity: 'error',
+      status: 'failed',
+      coverage: 'partial',
       check: 'build'
     })
   }

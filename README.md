@@ -55,7 +55,6 @@ jobs:
       - uses: actions/setup-node@v7
         with:
           node-version: 24
-          cache: npm
       - uses: obsidianmd/obsidian-workflows@v1
         with:
           mode: release
@@ -95,7 +94,20 @@ This also creates a draft release that you need to manually publish.
 | `build`        | _(empty)_ | Explicit build command override. For plugins, auto-detects `build`/`build:plugin`/`compile`. Set to `false` to disable.       |
 | `lint`         | `true`    | Whether to run linting.                                                                                                       |
 | `scanner-lint` | `false`   | Use community scanner lint rulesets instead of project config. Always forced `true` in release mode.                          |
+| `strict`       | `false`   | Fail the build on policy findings. By default, policy errors are reported as warnings.                                        |
 | `node-version` | `24`      | Node.js version. Minimum enforced: 20.                                                                                        |
+
+### Advisory and strict enforcement
+
+Policy findings are advisory by default while the rules are evaluated against
+real-world plugins and themes. They are reported as warnings, so validation,
+attestation, and draft release creation can continue. Set `strict: true` to
+enforce policy findings as build failures.
+
+Correctness failures remain hard errors in both modes. These include build or
+dependency-installation failures, an unusable `manifest.json`, missing release
+assets, draft release creation failures, and release runs not triggered by a tag
+ref.
 
 ## Outputs
 

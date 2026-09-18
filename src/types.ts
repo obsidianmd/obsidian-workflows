@@ -8,17 +8,34 @@ export type ProjectType = 'plugin' | 'theme'
 /** Run mode — PR checks or full release validation. */
 export type RunMode = 'pr' | 'release'
 
-/** Severity level for validation results. */
-export type Severity = 'error' | 'warning' | 'info'
+export type PolicySeverity = 'error' | 'warning' | 'recommendation'
+export type ResultStatus = 'failed' | 'passed' | 'skipped' | 'inconclusive'
+export type CheckCoverage = 'full' | 'partial' | 'unavailable'
 
-/** A single validation result item. */
-export interface ValidationResult {
-  /** Human-readable message describing the finding. */
-  message: string
-  /** Severity of the finding. */
-  severity: Severity
-  /** The check that produced this result (e.g., "manifest", "license"). */
+export interface FindingLocation {
+  file: string
+  startLine?: number
+  endLine?: number
+  startColumn?: number
+  endColumn?: number
+}
+
+export interface Finding {
+  ruleId: string
   check: string
+  message: string
+  enforcement: 'policy' | 'correctness'
+  severity: PolicySeverity
+  status: ResultStatus
+  coverage: CheckCoverage
+  location?: FindingLocation
+  helpMessage?: string
+  helpUrl?: string
+}
+
+export interface RegistryCheckResult {
+  findings: Finding[]
+  immutableIdentifierExempt: boolean
 }
 
 /** Parsed action inputs. */
@@ -28,6 +45,7 @@ export interface ActionInputs {
   build: string
   lint: boolean
   scannerLint: boolean
+  strict: boolean
   nodeVersion: string
 }
 
@@ -56,7 +74,7 @@ export interface PluginManifest {
 export interface ThemeManifest {
   name: string
   version: string
-  minAppVersion?: string
-  author?: string
+  minAppVersion: string
+  author: string
   authorUrl?: string
 }

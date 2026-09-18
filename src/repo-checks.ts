@@ -1,6 +1,6 @@
 import * as fs from 'node:fs'
 import * as path from 'node:path'
-import type { ValidationResult } from './types.js'
+import type { Finding } from './types.js'
 
 const OSI_APPROVED_SPDX = new Set([
   '0BSD',
@@ -167,14 +167,18 @@ function detectSpdxFromPackageJson(workspacePath: string): string | null {
   return null
 }
 
-export function checkLicense(workspacePath: string): ValidationResult[] {
-  const results: ValidationResult[] = []
+export function checkLicense(workspacePath: string): Finding[] {
+  const results: Finding[] = []
   const licenseFile = findLicenseFile(workspacePath)
 
   if (!licenseFile) {
     results.push({
+      ruleId: 'license-missing',
+      enforcement: 'policy',
       message: 'No LICENSE file found in the repository root.',
       severity: 'error',
+      status: 'failed',
+      coverage: 'partial',
       check: 'license'
     })
     return results
@@ -184,8 +188,12 @@ export function checkLicense(workspacePath: string): ValidationResult[] {
 
   if (spdx && !OSI_APPROVED_SPDX.has(spdx)) {
     results.push({
+      ruleId: 'license-not-osi-approved',
+      enforcement: 'policy',
       message: `License "${spdx}" in package.json is not an OSI-approved license.`,
       severity: 'warning',
+      status: 'failed',
+      coverage: 'partial',
       check: 'license'
     })
   }
@@ -201,8 +209,58 @@ const README_FILE_NAMES = [
   'Readme.md'
 ]
 
-export function checkReadme(workspacePath: string): ValidationResult[] {
-  const results: ValidationResult[] = []
+const SAMPLE_PLUGIN_PHRASES = [
+  'this is a sample plugin for obsidian',
+  'this project uses typescript to provide type checking and documentation',
+  'the repository depends on the latest plugin api',
+  'you can create a new obsidian plugin',
+  'releasing new releases'
+]
+
+const README_PLACEHOLDER_REGEX =
+  /\b(?:TODO|FIXME)\b|<your|yourusername|plugin-name|lorem ipsum/i
+
+const PROMOTIONAL_LANGUAGE_REGEX =
+  /\b(?:amazing|awesome|best|effortless(?:ly)?|game[- ]changing|incredible|must[- ]have|powerful|revolutionary|seamless(?:ly)?|supercharge|transform(?:ative)?|ultimate)\b/gi
+
+function readManifestName(workspacePath: string): string | null {
+  try {
+    const raw = fs.readFileSync(
+      path.join(workspacePath, 'manifest.json'),
+      'utf-8'
+    )
+    const manifest = JSON.parse(raw) as unknown
+    if (typeof manifest !== 'object' || manifest === null) return null
+    const name = (manifest as Record<string, unknown>).name
+    return typeof name === 'string' ? name : null
+  } catch {
+    return null
+  }
+}
+
+function normalizeName(value: string): string {
+  return value
+    .toLowerCase()
+    .replace(/[^\p{L}\p{N}\s]/gu, '')
+    .replace(/\s+/g, ' ')
+    .trim()
+}
+
+function readableText(content: string): string {
+  return content
+    .replace(/```[\s\S]*?```|~~~[\s\S]*?~~~/g, '')
+    .replace(/^ {4}.*$/gm, '')
+    .replace(/`[^`]*`/g, '')
+    .replace(/!\[[^\]]*\]\([^)]*\)/g, '')
+    .replace(/<img\b[^>]*>/gi, '')
+    .replace(/<[^>]+>/g, '')
+    .replace(/[#>*_~\[\]()-]/g, ' ')
+    .replace(/\s+/g, ' ')
+    .trim()
+}
+
+export function checkReadme(workspacePath: string): Finding[] {
+  const results: Finding[] = []
 
   let readmePath: string | null = null
   for (const name of README_FILE_NAMES) {
@@ -215,8 +273,12 @@ export function checkReadme(workspacePath: string): ValidationResult[] {
 
   if (!readmePath) {
     results.push({
+      ruleId: 'readme-missing',
+      enforcement: 'policy',
       message: 'No README file found in the repository root.',
       severity: 'error',
+      status: 'failed',
+      coverage: 'partial',
       check: 'readme'
     })
     return results
@@ -226,14 +288,116 @@ export function checkReadme(workspacePath: string): ValidationResult[] {
 
   if (content.length === 0) {
     results.push({
+      ruleId: 'readme-empty',
+      enforcement: 'policy',
       message: 'README file is empty.',
       severity: 'error',
+      status: 'failed',
+      coverage: 'partial',
       check: 'readme'
     })
-  } else if (content.length < 50) {
+  } else if (content.length < 200) {
     results.push({
+      ruleId: 'readme-too-short',
+      enforcement: 'policy',
       message: `README is very short (${content.length} chars). Consider adding more documentation.`,
       severity: 'warning',
+      status: 'failed',
+      coverage: 'partial',
+      check: 'readme'
+    })
+  }
+
+  const lowerContent = content.toLowerCase()
+  const samplePhraseCount = SAMPLE_PLUGIN_PHRASES.filter((phrase) =>
+    lowerContent.includes(phrase)
+  ).length
+  if (samplePhraseCount >= 2) {
+    results.push({
+      ruleId: 'readme-sample-template',
+      enforcement: 'policy',
+      message:
+        'README contains unmodified text from the Obsidian sample plugin template.',
+      severity: 'error',
+      status: 'failed',
+      coverage: 'partial',
+      check: 'readme'
+    })
+  }
+
+  if (README_PLACEHOLDER_REGEX.test(content)) {
+    results.push({
+      ruleId: 'readme-placeholder',
+      enforcement: 'policy',
+      message: 'README contains unfilled placeholder text.',
+      severity: 'warning',
+      status: 'failed',
+      coverage: 'partial',
+      check: 'readme'
+    })
+  }
+
+  const imageCount =
+    (content.match(/!\[[^\]]*\]\([^)]*\)/g)?.length ?? 0) +
+    (content.match(/<img\b[^>]*>/gi)?.length ?? 0)
+  const text = readableText(content)
+  if (imageCount >= 2 && text.length < 150) {
+    results.push({
+      ruleId: 'readme-screenshots-only',
+      enforcement: 'policy',
+      message: 'README relies on screenshots without enough explanatory text.',
+      severity: 'warning',
+      status: 'failed',
+      coverage: 'partial',
+      check: 'readme'
+    })
+  }
+
+  const promotionalMatches =
+    content.match(PROMOTIONAL_LANGUAGE_REGEX)?.length ?? 0
+  if (promotionalMatches >= 3) {
+    results.push({
+      ruleId: 'readme-promotional-language',
+      enforcement: 'policy',
+      message: 'README uses excessive promotional language.',
+      severity: 'recommendation',
+      status: 'failed',
+      coverage: 'partial',
+      check: 'readme'
+    })
+  }
+
+  const letters = content.match(/\p{L}/gu) ?? []
+  const outsideLatin = letters.filter(
+    (letter) => (letter.codePointAt(0) ?? 0) > 0x024f
+  ).length
+  if (letters.length >= 50 && outsideLatin / letters.length > 0.5) {
+    results.push({
+      ruleId: 'readme-non-english',
+      enforcement: 'policy',
+      message: 'README should include primarily English documentation.',
+      severity: 'warning',
+      status: 'failed',
+      coverage: 'partial',
+      check: 'readme'
+    })
+  }
+
+  const firstHeading = content.match(/^#\s+(.+)$/m)?.[1]
+  const manifestName = readManifestName(workspacePath)
+  if (
+    firstHeading !== undefined &&
+    manifestName !== null &&
+    normalizeName(firstHeading) !== normalizeName(manifestName)
+  ) {
+    results.push({
+      ruleId: 'readme-name-mismatch',
+      enforcement: 'policy',
+      message:
+        'The first README heading should match the plugin manifest name.',
+      severity: 'warning',
+      status: 'failed',
+      coverage: 'partial',
       check: 'readme'
     })
   }

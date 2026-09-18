@@ -38,6 +38,12 @@ inputs:
       instead of project config. Always forced to true in release mode.
     required: false
     default: 'false'
+  strict:
+    description: >-
+      Fail the build on policy findings. When false (default), policy findings
+      are reported as warnings.
+    required: false
+    default: 'false'
   node-version:
     description: >-
       Node.js version to use. Minimum enforced: 20.
