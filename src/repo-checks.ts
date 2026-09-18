@@ -254,7 +254,7 @@ function readableText(content: string): string {
     .replace(/!\[[^\]]*\]\([^)]*\)/g, '')
     .replace(/<img\b[^>]*>/gi, '')
     .replace(/<[^>]+>/g, '')
-    .replace(/[#>*_~\[\]()-]/g, ' ')
+    .replace(/[#>*_~[\]()-]/g, ' ')
     .replace(/\s+/g, ' ')
     .trim()
 }

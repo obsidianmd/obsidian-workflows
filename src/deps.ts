@@ -96,7 +96,7 @@ export async function ensureUserDeps(workspacePath: string): Promise<boolean> {
   core.info('Installing user dependencies for type resolution...')
 
   const detected = detectPackageManager(workspacePath)
-  let manager = detected ?? PNPM_DEFAULT
+  const manager = detected ?? PNPM_DEFAULT
   let command = detected ? manager.frozenInstall : manager.install
 
   if (!detected) {
@@ -117,7 +117,6 @@ export async function ensureUserDeps(workspacePath: string): Promise<boolean> {
         `${detected ? 'lockfile' : 'preferred default'} and may resolve different dependency versions. Add the ` +
         `matching setup step (for example pnpm/action-setup) before this action.`
     )
-    manager = NPM_FALLBACK
     command = NPM_FALLBACK.install
   } else if (detected) {
     core.info(`Detected ${manager.lockfile}; using "${command.join(' ')}".`)
