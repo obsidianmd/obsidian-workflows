@@ -104,3 +104,4 @@ __tests__/runner/*
 # Agent working directories
 .sisyphus/
 .omc/
+.omo/
