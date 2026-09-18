@@ -31413,7 +31413,7 @@ const SAMPLE_PLUGIN_PHRASES = [
     'releasing new releases'
 ];
 const README_PLACEHOLDER_REGEX = /\b(?:TODO|FIXME)\b|<your|yourusername|plugin-name|lorem ipsum/i;
-const PROMOTIONAL_LANGUAGE_REGEX = /\b(?:amazing|awesome|best|effortless(?:ly)?|game[- ]changing|incredible|must[- ]have|powerful|revolutionary|seamless(?:ly)?|supercharge|transform(?:ative)?|ultimate)\b/gi;
+const PROMOTIONAL_LANGUAGE_REGEX = /\b(?:amazing|awesome|best|effortless(?:ly)?|game[- ]changing|incredible|must[- ]have|powerful|revolutionary|seamless(?:ly)?|supercharge|transformative|transform|ultimate)\b/gi;
 function readManifestName(workspacePath) {
     try {
         const raw = fs$1.readFileSync(path$2.join(workspacePath, 'manifest.json'), 'utf-8');
