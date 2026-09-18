@@ -124,7 +124,7 @@ describe('checkRegistry', () => {
     ])
   })
 
-  it('is inconclusive when the theme registry is unparseable', async () => {
+  it('is inconclusive when the theme registry is unparsable', async () => {
     workspace = createWorkspace({ name: 'Midnight' })
     fetchMock.mockResolvedValueOnce(response({ invalid: true }))
 

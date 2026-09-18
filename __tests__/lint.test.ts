@@ -124,7 +124,7 @@ describe('Stylelint findings', () => {
     fs.rmSync(dir, { recursive: true, force: true })
   })
 
-  it('returns inconclusive for unparseable output', async () => {
+  it('returns inconclusive for unparsable output', async () => {
     const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'lint-test-'))
     fs.writeFileSync(path.join(dir, 'theme.css'), 'body {}')
     execMock.mockResolvedValue(0)
