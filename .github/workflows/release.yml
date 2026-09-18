@@ -30,11 +30,13 @@ jobs:
     steps:
       - uses: actions/checkout@v7
 
+      # No `cache:` here on purpose. setup-node throws when it cannot find a
+      # lockfile matching the chosen package manager, which breaks repositories
+      # that have no lockfile (most themes) or use pnpm.
       - name: Setup Node.js
         uses: actions/setup-node@v7
         with:
           node-version: ${{ inputs.node-version }}
-          cache: npm
 
       - name: Validate, build, and release
         uses: obsidianmd/obsidian-workflows@v1
