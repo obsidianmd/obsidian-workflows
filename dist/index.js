@@ -3,7 +3,7 @@ import os__default, { EOL } from 'os';
 import * as require$$0$2 from 'crypto';
 import require$$0__default$2, { X509Certificate } from 'crypto';
 import * as fs from 'fs';
-import fs__default, { promises, existsSync, readFileSync } from 'fs';
+import fs__default, { promises, constants as constants$f, existsSync, readFileSync } from 'fs';
 import * as path$1 from 'path';
 import path__default from 'path';
 import * as http from 'http';
@@ -31,20 +31,20 @@ import require$$1$4 from 'node:zlib';
 import require$$5$2 from 'node:perf_hooks';
 import require$$8$1 from 'node:util/types';
 import require$$1$3 from 'node:worker_threads';
-import require$$1$5 from 'node:url';
+import require$$1$5, { pathToFileURL } from 'node:url';
 import require$$5$3 from 'node:async_hooks';
 import require$$1$6 from 'node:console';
 import require$$1$7 from 'node:dns';
-import require$$2$2 from 'string_decoder';
+import require$$2$2, { StringDecoder } from 'string_decoder';
 import * as child from 'child_process';
 import { setTimeout as setTimeout$1 } from 'timers';
-import * as fs$1 from 'node:fs';
-import fs__default$1 from 'node:fs';
 import * as path$2 from 'node:path';
 import path__default$1 from 'node:path';
+import * as fs$1 from 'node:fs';
+import fs__default$1 from 'node:fs';
 import * as os$1 from 'node:os';
 import * as crypto$1 from 'node:crypto';
-import { KeyObject, createPrivateKey, createPublicKey, constants as constants$f, createSecretKey } from 'node:crypto';
+import { KeyObject, createPrivateKey, createPublicKey, constants as constants$g, createSecretKey } from 'node:crypto';
 import require$$0$d from 'url';
 import require$$0$c from 'buffer';
 import require$$2$3 from 'node:string_decoder';
@@ -28306,7 +28306,7 @@ function requireUndici$1 () {
 var undiciExports = requireUndici$1();
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
-var __awaiter$d = (undefined && undefined.__awaiter) || function (thisArg, _arguments, P, generator) {
+var __awaiter$e = (undefined && undefined.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
     return new (P || (P = Promise))(function (resolve, reject) {
         function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
@@ -28382,8 +28382,8 @@ class HttpClientResponse {
         this.message = message;
     }
     readBody() {
-        return __awaiter$d(this, void 0, void 0, function* () {
-            return new Promise((resolve) => __awaiter$d(this, void 0, void 0, function* () {
+        return __awaiter$e(this, void 0, void 0, function* () {
+            return new Promise((resolve) => __awaiter$e(this, void 0, void 0, function* () {
                 let output = Buffer.alloc(0);
                 this.message.on('data', (chunk) => {
                     output = Buffer.concat([output, chunk]);
@@ -28395,8 +28395,8 @@ class HttpClientResponse {
         });
     }
     readBodyBuffer() {
-        return __awaiter$d(this, void 0, void 0, function* () {
-            return new Promise((resolve) => __awaiter$d(this, void 0, void 0, function* () {
+        return __awaiter$e(this, void 0, void 0, function* () {
+            return new Promise((resolve) => __awaiter$e(this, void 0, void 0, function* () {
                 const chunks = [];
                 this.message.on('data', (chunk) => {
                     chunks.push(chunk);
@@ -28447,42 +28447,42 @@ class HttpClient {
         }
     }
     options(requestUrl, additionalHeaders) {
-        return __awaiter$d(this, void 0, void 0, function* () {
+        return __awaiter$e(this, void 0, void 0, function* () {
             return this.request('OPTIONS', requestUrl, null, additionalHeaders || {});
         });
     }
     get(requestUrl, additionalHeaders) {
-        return __awaiter$d(this, void 0, void 0, function* () {
+        return __awaiter$e(this, void 0, void 0, function* () {
             return this.request('GET', requestUrl, null, additionalHeaders || {});
         });
     }
     del(requestUrl, additionalHeaders) {
-        return __awaiter$d(this, void 0, void 0, function* () {
+        return __awaiter$e(this, void 0, void 0, function* () {
             return this.request('DELETE', requestUrl, null, additionalHeaders || {});
         });
     }
     post(requestUrl, data, additionalHeaders) {
-        return __awaiter$d(this, void 0, void 0, function* () {
+        return __awaiter$e(this, void 0, void 0, function* () {
             return this.request('POST', requestUrl, data, additionalHeaders || {});
         });
     }
     patch(requestUrl, data, additionalHeaders) {
-        return __awaiter$d(this, void 0, void 0, function* () {
+        return __awaiter$e(this, void 0, void 0, function* () {
             return this.request('PATCH', requestUrl, data, additionalHeaders || {});
         });
     }
     put(requestUrl, data, additionalHeaders) {
-        return __awaiter$d(this, void 0, void 0, function* () {
+        return __awaiter$e(this, void 0, void 0, function* () {
             return this.request('PUT', requestUrl, data, additionalHeaders || {});
         });
     }
     head(requestUrl, additionalHeaders) {
-        return __awaiter$d(this, void 0, void 0, function* () {
+        return __awaiter$e(this, void 0, void 0, function* () {
             return this.request('HEAD', requestUrl, null, additionalHeaders || {});
         });
     }
     sendStream(verb, requestUrl, stream, additionalHeaders) {
-        return __awaiter$d(this, void 0, void 0, function* () {
+        return __awaiter$e(this, void 0, void 0, function* () {
             return this.request(verb, requestUrl, stream, additionalHeaders);
         });
     }
@@ -28491,14 +28491,14 @@ class HttpClient {
      * Be aware that not found returns a null.  Other errors (4xx, 5xx) reject the promise
      */
     getJson(requestUrl_1) {
-        return __awaiter$d(this, arguments, void 0, function* (requestUrl, additionalHeaders = {}) {
+        return __awaiter$e(this, arguments, void 0, function* (requestUrl, additionalHeaders = {}) {
             additionalHeaders[Headers.Accept] = this._getExistingOrDefaultHeader(additionalHeaders, Headers.Accept, MediaTypes.ApplicationJson);
             const res = yield this.get(requestUrl, additionalHeaders);
             return this._processResponse(res, this.requestOptions);
         });
     }
     postJson(requestUrl_1, obj_1) {
-        return __awaiter$d(this, arguments, void 0, function* (requestUrl, obj, additionalHeaders = {}) {
+        return __awaiter$e(this, arguments, void 0, function* (requestUrl, obj, additionalHeaders = {}) {
             const data = JSON.stringify(obj, null, 2);
             additionalHeaders[Headers.Accept] = this._getExistingOrDefaultHeader(additionalHeaders, Headers.Accept, MediaTypes.ApplicationJson);
             additionalHeaders[Headers.ContentType] =
@@ -28508,7 +28508,7 @@ class HttpClient {
         });
     }
     putJson(requestUrl_1, obj_1) {
-        return __awaiter$d(this, arguments, void 0, function* (requestUrl, obj, additionalHeaders = {}) {
+        return __awaiter$e(this, arguments, void 0, function* (requestUrl, obj, additionalHeaders = {}) {
             const data = JSON.stringify(obj, null, 2);
             additionalHeaders[Headers.Accept] = this._getExistingOrDefaultHeader(additionalHeaders, Headers.Accept, MediaTypes.ApplicationJson);
             additionalHeaders[Headers.ContentType] =
@@ -28518,7 +28518,7 @@ class HttpClient {
         });
     }
     patchJson(requestUrl_1, obj_1) {
-        return __awaiter$d(this, arguments, void 0, function* (requestUrl, obj, additionalHeaders = {}) {
+        return __awaiter$e(this, arguments, void 0, function* (requestUrl, obj, additionalHeaders = {}) {
             const data = JSON.stringify(obj, null, 2);
             additionalHeaders[Headers.Accept] = this._getExistingOrDefaultHeader(additionalHeaders, Headers.Accept, MediaTypes.ApplicationJson);
             additionalHeaders[Headers.ContentType] =
@@ -28533,7 +28533,7 @@ class HttpClient {
      * Prefer get, del, post and patch
      */
     request(verb, requestUrl, data, headers) {
-        return __awaiter$d(this, void 0, void 0, function* () {
+        return __awaiter$e(this, void 0, void 0, function* () {
             if (this._disposed) {
                 throw new Error('Client has already been disposed.');
             }
@@ -28629,7 +28629,7 @@ class HttpClient {
      * @param data
      */
     requestRaw(info, data) {
-        return __awaiter$d(this, void 0, void 0, function* () {
+        return __awaiter$e(this, void 0, void 0, function* () {
             return new Promise((resolve, reject) => {
                 function callbackForResult(err, res) {
                     if (err) {
@@ -28910,15 +28910,15 @@ class HttpClient {
         return baseUserAgent;
     }
     _performExponentialBackoff(retryNumber) {
-        return __awaiter$d(this, void 0, void 0, function* () {
+        return __awaiter$e(this, void 0, void 0, function* () {
             retryNumber = Math.min(ExponentialBackoffCeiling, retryNumber);
             const ms = ExponentialBackoffTimeSlice * Math.pow(2, retryNumber);
             return new Promise(resolve => setTimeout(() => resolve(), ms));
         });
     }
     _processResponse(res, options) {
-        return __awaiter$d(this, void 0, void 0, function* () {
-            return new Promise((resolve, reject) => __awaiter$d(this, void 0, void 0, function* () {
+        return __awaiter$e(this, void 0, void 0, function* () {
+            return new Promise((resolve, reject) => __awaiter$e(this, void 0, void 0, function* () {
                 const statusCode = res.message.statusCode || 0;
                 const response = {
                     statusCode,
@@ -28984,7 +28984,7 @@ class HttpClient {
 }
 const lowercaseKeys$2 = (obj) => Object.keys(obj).reduce((c, k) => ((c[k.toLowerCase()] = obj[k]), c), {});
 
-var __awaiter$c = (undefined && undefined.__awaiter) || function (thisArg, _arguments, P, generator) {
+var __awaiter$d = (undefined && undefined.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
     return new (P || (P = Promise))(function (resolve, reject) {
         function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
@@ -29010,13 +29010,13 @@ class BearerCredentialHandler {
         return false;
     }
     handleAuthentication() {
-        return __awaiter$c(this, void 0, void 0, function* () {
+        return __awaiter$d(this, void 0, void 0, function* () {
             throw new Error('not implemented');
         });
     }
 }
 
-var __awaiter$b = (undefined && undefined.__awaiter) || function (thisArg, _arguments, P, generator) {
+var __awaiter$c = (undefined && undefined.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
     return new (P || (P = Promise))(function (resolve, reject) {
         function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
@@ -29048,7 +29048,7 @@ class OidcClient {
         return runtimeUrl;
     }
     static getCall(id_token_url) {
-        return __awaiter$b(this, void 0, void 0, function* () {
+        return __awaiter$c(this, void 0, void 0, function* () {
             var _a;
             const httpclient = OidcClient.createHttpClient();
             const res = yield httpclient
@@ -29066,7 +29066,7 @@ class OidcClient {
         });
     }
     static getIDToken(audience) {
-        return __awaiter$b(this, void 0, void 0, function* () {
+        return __awaiter$c(this, void 0, void 0, function* () {
             try {
                 // New ID Token is requested from action service
                 let id_token_url = OidcClient.getIDTokenUrl();
@@ -29086,7 +29086,7 @@ class OidcClient {
     }
 }
 
-(undefined && undefined.__awaiter) || function (thisArg, _arguments, P, generator) {
+var __awaiter$b = (undefined && undefined.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
     return new (P || (P = Promise))(function (resolve, reject) {
         function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
@@ -29096,6 +29096,268 @@ class OidcClient {
     });
 };
 const { access, appendFile, writeFile } = promises;
+const SUMMARY_ENV_VAR = 'GITHUB_STEP_SUMMARY';
+class Summary {
+    constructor() {
+        this._buffer = '';
+    }
+    /**
+     * Finds the summary file path from the environment, rejects if env var is not found or file does not exist
+     * Also checks r/w permissions.
+     *
+     * @returns step summary file path
+     */
+    filePath() {
+        return __awaiter$b(this, void 0, void 0, function* () {
+            if (this._filePath) {
+                return this._filePath;
+            }
+            const pathFromEnv = process.env[SUMMARY_ENV_VAR];
+            if (!pathFromEnv) {
+                throw new Error(`Unable to find environment variable for $${SUMMARY_ENV_VAR}. Check if your runtime environment supports job summaries.`);
+            }
+            try {
+                yield access(pathFromEnv, constants$f.R_OK | constants$f.W_OK);
+            }
+            catch (_a) {
+                throw new Error(`Unable to access summary file: '${pathFromEnv}'. Check if the file has correct read/write permissions.`);
+            }
+            this._filePath = pathFromEnv;
+            return this._filePath;
+        });
+    }
+    /**
+     * Wraps content in an HTML tag, adding any HTML attributes
+     *
+     * @param {string} tag HTML tag to wrap
+     * @param {string | null} content content within the tag
+     * @param {[attribute: string]: string} attrs key-value list of HTML attributes to add
+     *
+     * @returns {string} content wrapped in HTML element
+     */
+    wrap(tag, content, attrs = {}) {
+        const htmlAttrs = Object.entries(attrs)
+            .map(([key, value]) => ` ${key}="${value}"`)
+            .join('');
+        if (!content) {
+            return `<${tag}${htmlAttrs}>`;
+        }
+        return `<${tag}${htmlAttrs}>${content}</${tag}>`;
+    }
+    /**
+     * Writes text in the buffer to the summary buffer file and empties buffer. Will append by default.
+     *
+     * @param {SummaryWriteOptions} [options] (optional) options for write operation
+     *
+     * @returns {Promise<Summary>} summary instance
+     */
+    write(options) {
+        return __awaiter$b(this, void 0, void 0, function* () {
+            const overwrite = !!(options === null || options === void 0 ? void 0 : options.overwrite);
+            const filePath = yield this.filePath();
+            const writeFunc = overwrite ? writeFile : appendFile;
+            yield writeFunc(filePath, this._buffer, { encoding: 'utf8' });
+            return this.emptyBuffer();
+        });
+    }
+    /**
+     * Clears the summary buffer and wipes the summary file
+     *
+     * @returns {Summary} summary instance
+     */
+    clear() {
+        return __awaiter$b(this, void 0, void 0, function* () {
+            return this.emptyBuffer().write({ overwrite: true });
+        });
+    }
+    /**
+     * Returns the current summary buffer as a string
+     *
+     * @returns {string} string of summary buffer
+     */
+    stringify() {
+        return this._buffer;
+    }
+    /**
+     * If the summary buffer is empty
+     *
+     * @returns {boolen} true if the buffer is empty
+     */
+    isEmptyBuffer() {
+        return this._buffer.length === 0;
+    }
+    /**
+     * Resets the summary buffer without writing to summary file
+     *
+     * @returns {Summary} summary instance
+     */
+    emptyBuffer() {
+        this._buffer = '';
+        return this;
+    }
+    /**
+     * Adds raw text to the summary buffer
+     *
+     * @param {string} text content to add
+     * @param {boolean} [addEOL=false] (optional) append an EOL to the raw text (default: false)
+     *
+     * @returns {Summary} summary instance
+     */
+    addRaw(text, addEOL = false) {
+        this._buffer += text;
+        return addEOL ? this.addEOL() : this;
+    }
+    /**
+     * Adds the operating system-specific end-of-line marker to the buffer
+     *
+     * @returns {Summary} summary instance
+     */
+    addEOL() {
+        return this.addRaw(EOL);
+    }
+    /**
+     * Adds an HTML codeblock to the summary buffer
+     *
+     * @param {string} code content to render within fenced code block
+     * @param {string} lang (optional) language to syntax highlight code
+     *
+     * @returns {Summary} summary instance
+     */
+    addCodeBlock(code, lang) {
+        const attrs = Object.assign({}, (lang && { lang }));
+        const element = this.wrap('pre', this.wrap('code', code), attrs);
+        return this.addRaw(element).addEOL();
+    }
+    /**
+     * Adds an HTML list to the summary buffer
+     *
+     * @param {string[]} items list of items to render
+     * @param {boolean} [ordered=false] (optional) if the rendered list should be ordered or not (default: false)
+     *
+     * @returns {Summary} summary instance
+     */
+    addList(items, ordered = false) {
+        const tag = ordered ? 'ol' : 'ul';
+        const listItems = items.map(item => this.wrap('li', item)).join('');
+        const element = this.wrap(tag, listItems);
+        return this.addRaw(element).addEOL();
+    }
+    /**
+     * Adds an HTML table to the summary buffer
+     *
+     * @param {SummaryTableCell[]} rows table rows
+     *
+     * @returns {Summary} summary instance
+     */
+    addTable(rows) {
+        const tableBody = rows
+            .map(row => {
+            const cells = row
+                .map(cell => {
+                if (typeof cell === 'string') {
+                    return this.wrap('td', cell);
+                }
+                const { header, data, colspan, rowspan } = cell;
+                const tag = header ? 'th' : 'td';
+                const attrs = Object.assign(Object.assign({}, (colspan && { colspan })), (rowspan && { rowspan }));
+                return this.wrap(tag, data, attrs);
+            })
+                .join('');
+            return this.wrap('tr', cells);
+        })
+            .join('');
+        const element = this.wrap('table', tableBody);
+        return this.addRaw(element).addEOL();
+    }
+    /**
+     * Adds a collapsable HTML details element to the summary buffer
+     *
+     * @param {string} label text for the closed state
+     * @param {string} content collapsable content
+     *
+     * @returns {Summary} summary instance
+     */
+    addDetails(label, content) {
+        const element = this.wrap('details', this.wrap('summary', label) + content);
+        return this.addRaw(element).addEOL();
+    }
+    /**
+     * Adds an HTML image tag to the summary buffer
+     *
+     * @param {string} src path to the image you to embed
+     * @param {string} alt text description of the image
+     * @param {SummaryImageOptions} options (optional) addition image attributes
+     *
+     * @returns {Summary} summary instance
+     */
+    addImage(src, alt, options) {
+        const { width, height } = options || {};
+        const attrs = Object.assign(Object.assign({}, (width && { width })), (height && { height }));
+        const element = this.wrap('img', null, Object.assign({ src, alt }, attrs));
+        return this.addRaw(element).addEOL();
+    }
+    /**
+     * Adds an HTML section heading element
+     *
+     * @param {string} text heading text
+     * @param {number | string} [level=1] (optional) the heading level, default: 1
+     *
+     * @returns {Summary} summary instance
+     */
+    addHeading(text, level) {
+        const tag = `h${level}`;
+        const allowedTag = ['h1', 'h2', 'h3', 'h4', 'h5', 'h6'].includes(tag)
+            ? tag
+            : 'h1';
+        const element = this.wrap(allowedTag, text);
+        return this.addRaw(element).addEOL();
+    }
+    /**
+     * Adds an HTML thematic break (<hr>) to the summary buffer
+     *
+     * @returns {Summary} summary instance
+     */
+    addSeparator() {
+        const element = this.wrap('hr', null);
+        return this.addRaw(element).addEOL();
+    }
+    /**
+     * Adds an HTML line break (<br>) to the summary buffer
+     *
+     * @returns {Summary} summary instance
+     */
+    addBreak() {
+        const element = this.wrap('br', null);
+        return this.addRaw(element).addEOL();
+    }
+    /**
+     * Adds an HTML blockquote to the summary buffer
+     *
+     * @param {string} text quote text
+     * @param {string} cite (optional) citation url
+     *
+     * @returns {Summary} summary instance
+     */
+    addQuote(text, cite) {
+        const attrs = Object.assign({}, (cite && { cite }));
+        const element = this.wrap('blockquote', text, attrs);
+        return this.addRaw(element).addEOL();
+    }
+    /**
+     * Adds an HTML anchor tag to the summary buffer
+     *
+     * @param {string} text link text/content
+     * @param {string} href hyperlink
+     *
+     * @returns {Summary} summary instance
+     */
+    addLink(text, href) {
+        const element = this.wrap('a', text, { href });
+        return this.addRaw(element).addEOL();
+    }
+}
+const _summary = new Summary();
+const summary = _summary;
 
 var __awaiter$a = (undefined && undefined.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
@@ -29950,6 +30212,50 @@ function exec(commandLine, args, options) {
         return runner.exec();
     });
 }
+/**
+ * Exec a command and get the output.
+ * Output will be streamed to the live console.
+ * Returns promise with the exit code and collected stdout and stderr
+ *
+ * @param     commandLine           command to execute (can include additional args). Must be correctly escaped.
+ * @param     args                  optional arguments for tool. Escaping is handled by the lib.
+ * @param     options               optional exec options.  See ExecOptions
+ * @returns   Promise<ExecOutput>   exit code, stdout, and stderr
+ */
+function getExecOutput(commandLine, args, options) {
+    return __awaiter$7(this, void 0, void 0, function* () {
+        var _a, _b;
+        let stdout = '';
+        let stderr = '';
+        //Using string decoder covers the case where a mult-byte character is split
+        const stdoutDecoder = new StringDecoder('utf8');
+        const stderrDecoder = new StringDecoder('utf8');
+        const originalStdoutListener = (_a = options === null || options === void 0 ? void 0 : options.listeners) === null || _a === void 0 ? void 0 : _a.stdout;
+        const originalStdErrListener = (_b = options === null || options === void 0 ? void 0 : options.listeners) === null || _b === void 0 ? void 0 : _b.stderr;
+        const stdErrListener = (data) => {
+            stderr += stderrDecoder.write(data);
+            if (originalStdErrListener) {
+                originalStdErrListener(data);
+            }
+        };
+        const stdOutListener = (data) => {
+            stdout += stdoutDecoder.write(data);
+            if (originalStdoutListener) {
+                originalStdoutListener(data);
+            }
+        };
+        const listeners = Object.assign(Object.assign({}, options === null || options === void 0 ? void 0 : options.listeners), { stdout: stdOutListener, stderr: stdErrListener });
+        const exitCode = yield exec(commandLine, args, Object.assign(Object.assign({}, options), { listeners }));
+        //flush any remaining characters
+        stdout += stdoutDecoder.end();
+        stderr += stderrDecoder.end();
+        return {
+            exitCode,
+            stdout,
+            stderr
+        };
+    });
+}
 
 (undefined && undefined.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
@@ -30082,6 +30388,14 @@ function warning(message, properties = {}) {
     issueCommand('warning', toCommandProperties(properties), message instanceof Error ? message.toString() : message);
 }
 /**
+ * Adds a notice issue
+ * @param message notice issue message. Errors will be converted to string via toString()
+ * @param properties optional properties to add to the annotation.
+ */
+function notice(message, properties = {}) {
+    issueCommand('notice', toCommandProperties(properties), message instanceof Error ? message.toString() : message);
+}
+/**
  * Writes info to log with console.log.
  * @param message info message
  */
@@ -30140,16 +30454,6 @@ function isPluginManifest(data) {
         isOptionalFundingUrl(obj.fundingUrl) &&
         isOptionalBoolean(obj.isDesktopOnly));
 }
-function isThemeManifest(data) {
-    if (typeof data !== 'object' || data === null)
-        return false;
-    const obj = data;
-    return (typeof obj.name === 'string' &&
-        typeof obj.version === 'string' &&
-        isOptionalString(obj.author) &&
-        isOptionalString(obj.minAppVersion) &&
-        isOptionalString(obj.authorUrl));
-}
 function readManifest(workspacePath) {
     const manifestPath = path$2.join(workspacePath, 'manifest.json');
     if (!fs$1.existsSync(manifestPath))
@@ -30183,113 +30487,450 @@ function detectProjectType(workspacePath, explicitType) {
         'and no theme.css found (not a theme). Set the `type` input to "plugin" or "theme" explicitly.');
 }
 
+function fieldForFinding(finding) {
+    if (finding.ruleId.startsWith('manifest-description-'))
+        return 'description';
+    switch (finding.ruleId) {
+        case 'manifest-id-banned-word':
+            return 'id';
+        case 'manifest-disallowed-name':
+        case 'manifest-name-too-long':
+        case 'manifest-name-all-caps':
+            return 'name';
+        case 'manifest-version-placeholder':
+            return 'version';
+        case 'manifest-author-placeholder':
+        case 'manifest-author-email':
+        case 'manifest-author-url':
+            return 'author';
+        case 'manifest-author-url-own-repo':
+        case 'manifest-author-url-repo':
+            return 'authorUrl';
+        case 'manifest-is-desktop-only-type':
+            return 'isDesktopOnly';
+        case 'manifest-unknown-field':
+            return finding.message.match(/unknown field: (.*)\.$/)?.[1];
+        case 'manifest-invalid-semver':
+        case 'manifest-url-invalid':
+        case 'manifest-url-non-https':
+        case 'manifest-url-raw-ip':
+        case 'manifest-url-obsidian':
+            return finding.message.match(/^([\w]+)/)?.[1];
+        case 'manifest-invalid-field-type':
+            return finding.message.match(/field ([\w]+)/)?.[1];
+        default:
+            return undefined;
+    }
+}
+function locateManifestFindings(workspacePath, findings) {
+    const source = fs$1.readFileSync(path$2.join(workspacePath, 'manifest.json'), 'utf8');
+    const lines = source.split(/\r?\n/);
+    return findings.map((finding) => {
+        const field = fieldForFinding(finding)?.split('.')[0];
+        if (field === undefined)
+            return finding;
+        const escapedField = field.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+        const lineIndex = lines.findIndex((line) => new RegExp(`^\\s*"${escapedField}"\\s*:`).test(line));
+        if (lineIndex < 0)
+            return finding;
+        return {
+            ...finding,
+            location: { file: 'manifest.json', startLine: lineIndex + 1 }
+        };
+    });
+}
+
 const SEMVER_REGEX = /^\d+\.\d+\.\d+(-[\w.]+)?$/;
 const DISALLOWED_NAME_WORDS = ['obsidian', 'plugin'];
+const AUTHOR_PLACEHOLDERS = new Set([
+    'your name',
+    'author',
+    'me',
+    'unknown',
+    'anonymous',
+    'plugin author',
+    'your-name'
+]);
+const THEME_MANIFEST_FIELDS = new Set([
+    'name',
+    'version',
+    'minAppVersion',
+    'author',
+    'authorUrl',
+    'fundingUrl'
+]);
+const PLUGIN_MANIFEST_FIELDS = new Set([
+    'id',
+    'name',
+    'version',
+    'description',
+    'minAppVersion',
+    'author',
+    'authorUrl',
+    'fundingUrl',
+    'isDesktopOnly'
+]);
+const PLUGIN_RECOMMENDED_FIELDS = ['author', 'minAppVersion', 'isDesktopOnly'];
+const EMAIL_REGEX = /\b[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}\b/i;
+const HTTP_URL_REGEX = /https?:\/\/\S+/i;
 function validateSemver(version, field) {
     if (!SEMVER_REGEX.test(version)) {
         return [
             {
+                ruleId: 'manifest-invalid-semver',
+                enforcement: 'policy',
                 message: `${field} "${version}" is not valid semver (expected X.Y.Z).`,
                 severity: 'error',
+                status: 'failed',
+                coverage: 'partial',
                 check: 'manifest'
             }
         ];
     }
     return [];
 }
-function validateName(name) {
+function validateBannedWords(value, field, ruleId, exempt = false) {
+    if (exempt)
+        return [];
     const results = [];
-    const lower = name.toLowerCase();
+    const lower = value.toLowerCase();
     for (const word of DISALLOWED_NAME_WORDS) {
         if (lower.includes(word)) {
             results.push({
-                message: `Plugin name should not contain "${word}". Found in: "${name}".`,
-                severity: 'warning',
+                ruleId,
+                enforcement: 'policy',
+                message: `${field} must not contain "${word}". Found in: "${value}".`,
+                severity: 'error',
+                status: 'failed',
+                coverage: 'partial',
                 check: 'manifest'
             });
         }
     }
     return results;
 }
-function validateDescription(description) {
+function isAllCaps(value) {
+    const uppercaseLetters = value.match(/[A-Z]/g)?.length ?? 0;
+    return uppercaseLetters >= 2 && value === value.toUpperCase();
+}
+function validateDescription(description, name) {
     const results = [];
     const trimmed = description.trim();
+    const lower = trimmed.toLowerCase();
+    const lowerName = name.trim().toLowerCase();
     if (trimmed.length < 10) {
         results.push({
+            ruleId: 'manifest-description-too-short',
+            enforcement: 'policy',
             message: `Description is too short (${trimmed.length} chars). Provide a meaningful description (10+ chars).`,
             severity: 'warning',
+            status: 'failed',
+            coverage: 'partial',
+            check: 'manifest'
+        });
+    }
+    if (lower === lowerName) {
+        results.push({
+            ruleId: 'manifest-description-equals-name',
+            enforcement: 'policy',
+            message: 'Plugin description must not be the same as its name.',
+            severity: 'error',
+            status: 'failed',
+            coverage: 'partial',
+            check: 'manifest'
+        });
+    }
+    if (lowerName.length > 0 && lower.startsWith(lowerName)) {
+        results.push({
+            ruleId: 'manifest-description-starts-with-name',
+            enforcement: 'policy',
+            message: 'Plugin description should not start with the plugin name.',
+            severity: 'warning',
+            status: 'failed',
+            coverage: 'partial',
+            check: 'manifest'
+        });
+    }
+    if (/\b(?:this plugin|a plugin that|the plugin)\b/i.test(trimmed)) {
+        results.push({
+            ruleId: 'manifest-description-self-reference',
+            enforcement: 'policy',
+            message: 'Plugin description should not refer to itself as a plugin.',
+            severity: 'warning',
+            status: 'failed',
+            coverage: 'partial',
+            check: 'manifest'
+        });
+    }
+    if (trimmed.length > 250) {
+        results.push({
+            ruleId: 'manifest-description-too-long',
+            enforcement: 'policy',
+            message: `Plugin description is too long (${trimmed.length} chars). The maximum is 250 characters.`,
+            severity: 'error',
+            status: 'failed',
+            coverage: 'partial',
+            check: 'manifest'
+        });
+    }
+    if (!/[.!?]$/.test(trimmed)) {
+        results.push({
+            ruleId: 'manifest-description-punctuation',
+            enforcement: 'policy',
+            message: 'Plugin description should end with a period, exclamation mark, or question mark.',
+            severity: 'warning',
+            status: 'failed',
+            coverage: 'partial',
+            check: 'manifest'
+        });
+    }
+    if (/obsidian/i.test(trimmed)) {
+        results.push({
+            ruleId: 'manifest-description-brand-name',
+            enforcement: 'policy',
+            message: 'Plugin description must not contain the Obsidian brand name.',
+            severity: 'error',
+            status: 'failed',
+            coverage: 'partial',
+            check: 'manifest'
+        });
+    }
+    return results;
+}
+function validateAuthor(author, manifestType) {
+    const results = [];
+    const trimmed = author.trim();
+    if (AUTHOR_PLACEHOLDERS.has(trimmed.toLowerCase())) {
+        results.push({
+            ruleId: 'manifest-author-placeholder',
+            enforcement: 'policy',
+            message: `${manifestType} manifest author must not use the placeholder "${trimmed}".`,
+            severity: 'error',
+            status: 'failed',
+            coverage: 'partial',
+            check: 'manifest'
+        });
+    }
+    if (EMAIL_REGEX.test(trimmed)) {
+        results.push({
+            ruleId: 'manifest-author-email',
+            enforcement: 'policy',
+            message: `${manifestType} manifest author must not contain an email address.`,
+            severity: 'error',
+            status: 'failed',
+            coverage: 'partial',
+            check: 'manifest'
+        });
+    }
+    if (HTTP_URL_REGEX.test(trimmed)) {
+        results.push({
+            ruleId: 'manifest-author-url',
+            enforcement: 'policy',
+            message: `${manifestType} manifest author must not contain an HTTP or HTTPS URL.`,
+            severity: 'error',
+            status: 'failed',
+            coverage: 'partial',
             check: 'manifest'
         });
     }
     return results;
 }
 function validateUrl(url, field) {
-    if (url === undefined)
+    if (url === undefined || typeof url !== 'string')
         return [];
+    let parsed;
     try {
-        const parsed = new URL(url);
-        if (parsed.protocol !== 'https:' && parsed.protocol !== 'http:') {
-            return [
-                {
-                    message: `${field} must be an HTTP or HTTPS URL. Got: "${url}".`,
-                    severity: 'error',
-                    check: 'manifest'
-                }
-            ];
-        }
+        parsed = new URL(url);
     }
     catch {
         return [
             {
+                ruleId: 'manifest-url-invalid',
+                enforcement: 'policy',
                 message: `${field} is not a valid URL: "${url}".`,
                 severity: 'error',
+                status: 'failed',
+                coverage: 'partial',
                 check: 'manifest'
             }
         ];
     }
-    return [];
-}
-function validatePluginManifest(manifest) {
     const results = [];
-    if (!manifest.id || manifest.id.trim().length === 0) {
+    if (parsed.protocol !== 'https:') {
         results.push({
-            message: 'Plugin manifest is missing required field: id.',
+            ruleId: 'manifest-url-non-https',
+            enforcement: 'policy',
+            message: `${field} must use HTTPS. Got: "${url}".`,
             severity: 'error',
+            status: 'failed',
+            coverage: 'partial',
             check: 'manifest'
         });
     }
-    if (!manifest.name || manifest.name.trim().length === 0) {
+    if (/^(?:\d{1,3}\.){3}\d{1,3}$/.test(parsed.hostname)) {
         results.push({
-            message: 'Plugin manifest is missing required field: name.',
+            ruleId: 'manifest-url-raw-ip',
+            enforcement: 'policy',
+            message: `${field} must not use a bare IPv4 address.`,
             severity: 'error',
+            status: 'failed',
+            coverage: 'partial',
+            check: 'manifest'
+        });
+    }
+    if (parsed.hostname === 'obsidian.md' ||
+        parsed.hostname === 'www.obsidian.md') {
+        results.push({
+            ruleId: 'manifest-url-obsidian',
+            enforcement: 'policy',
+            message: `${field} must not point to obsidian.md.`,
+            severity: 'error',
+            status: 'failed',
+            coverage: 'partial',
+            check: 'manifest'
+        });
+    }
+    if (field === 'authorUrl' &&
+        (parsed.hostname === 'github.com' || parsed.hostname === 'www.github.com')) {
+        const segments = parsed.pathname.split('/').filter(Boolean);
+        if (segments.length >= 2) {
+            const repository = `${segments[0]}/${segments[1].replace(/\.git$/i, '')}`;
+            const ownRepository = process.env.GITHUB_REPOSITORY;
+            if (ownRepository?.toLowerCase() === repository.toLowerCase()) {
+                results.push({
+                    ruleId: 'manifest-author-url-own-repo',
+                    enforcement: 'policy',
+                    message: 'authorUrl should identify the author rather than the plugin repository.',
+                    severity: 'warning',
+                    status: 'failed',
+                    coverage: 'partial',
+                    check: 'manifest'
+                });
+            }
+            results.push({
+                ruleId: 'manifest-author-url-repo',
+                enforcement: 'policy',
+                message: 'authorUrl should link to an author profile rather than a GitHub repository.',
+                severity: 'warning',
+                status: 'failed',
+                coverage: 'partial',
+                check: 'manifest'
+            });
+        }
+    }
+    return results;
+}
+function validatePluginManifest(manifest, immutableIdentifierExempt = false) {
+    const results = [];
+    if (typeof manifest.id !== 'string' || manifest.id.trim().length === 0) {
+        results.push({
+            ruleId: 'manifest-missing-required-field',
+            enforcement: 'correctness',
+            message: 'Plugin manifest is missing required field: id.',
+            severity: 'error',
+            status: 'failed',
+            coverage: 'partial',
             check: 'manifest'
         });
     }
     else {
-        results.push(...validateName(manifest.name));
+        results.push(...validateBannedWords(manifest.id, 'Plugin ID', 'manifest-id-banned-word', immutableIdentifierExempt));
     }
-    if (!manifest.version || manifest.version.trim().length === 0) {
+    if (typeof manifest.name !== 'string' || manifest.name.trim().length === 0) {
         results.push({
+            ruleId: 'manifest-missing-required-field',
+            enforcement: 'correctness',
+            message: 'Plugin manifest is missing required field: name.',
+            severity: 'error',
+            status: 'failed',
+            coverage: 'partial',
+            check: 'manifest'
+        });
+    }
+    else {
+        results.push(...validateBannedWords(manifest.name, 'Plugin name', 'manifest-disallowed-name'));
+        if (manifest.name.length > 50) {
+            results.push({
+                ruleId: 'manifest-name-too-long',
+                enforcement: 'policy',
+                message: `Plugin manifest name is too long (${manifest.name.length} chars). The maximum is 50 characters.`,
+                severity: 'warning',
+                status: 'failed',
+                coverage: 'partial',
+                check: 'manifest'
+            });
+        }
+        if (isAllCaps(manifest.name)) {
+            results.push({
+                ruleId: 'manifest-name-all-caps',
+                enforcement: 'policy',
+                message: 'Plugin manifest name should not be written in all caps.',
+                severity: 'warning',
+                status: 'failed',
+                coverage: 'partial',
+                check: 'manifest'
+            });
+        }
+    }
+    if (typeof manifest.version !== 'string' ||
+        manifest.version.trim().length === 0) {
+        results.push({
+            ruleId: 'manifest-missing-required-field',
+            enforcement: 'correctness',
             message: 'Plugin manifest is missing required field: version.',
             severity: 'error',
+            status: 'failed',
+            coverage: 'partial',
             check: 'manifest'
         });
     }
     else {
         results.push(...validateSemver(manifest.version, 'version'));
+        if (manifest.version === '0.0.0') {
+            results.push({
+                ruleId: 'manifest-version-placeholder',
+                enforcement: 'policy',
+                message: 'Plugin manifest version must not use the 0.0.0 placeholder.',
+                severity: 'error',
+                status: 'failed',
+                coverage: 'partial',
+                check: 'manifest'
+            });
+        }
     }
-    if (!manifest.description || manifest.description.trim().length === 0) {
+    if (typeof manifest.description !== 'string' ||
+        manifest.description.trim().length === 0) {
         results.push({
+            ruleId: 'manifest-missing-required-field',
+            enforcement: 'correctness',
             message: 'Plugin manifest is missing required field: description.',
             severity: 'error',
+            status: 'failed',
+            coverage: 'partial',
             check: 'manifest'
         });
     }
     else {
-        results.push(...validateDescription(manifest.description));
+        const name = typeof manifest.name === 'string' ? manifest.name : '';
+        results.push(...validateDescription(manifest.description, name));
     }
-    if (manifest.minAppVersion) {
+    if (typeof manifest.minAppVersion === 'string' && manifest.minAppVersion) {
         results.push(...validateSemver(manifest.minAppVersion, 'minAppVersion'));
+    }
+    if (typeof manifest.author === 'string') {
+        results.push(...validateAuthor(manifest.author, 'Plugin'));
+    }
+    if (Object.prototype.hasOwnProperty.call(manifest, 'isDesktopOnly') &&
+        typeof manifest.isDesktopOnly !== 'boolean') {
+        results.push({
+            ruleId: 'manifest-is-desktop-only-type',
+            enforcement: 'correctness',
+            message: 'Plugin manifest field isDesktopOnly must be a boolean.',
+            severity: 'error',
+            status: 'failed',
+            coverage: 'partial',
+            check: 'manifest'
+        });
     }
     results.push(...validateUrl(manifest.authorUrl, 'authorUrl'));
     if (typeof manifest.fundingUrl === 'string') {
@@ -30301,42 +30942,165 @@ function validatePluginManifest(manifest) {
             results.push(...validateUrl(url, `fundingUrl.${platform}`));
         }
     }
+    for (const field of Object.keys(manifest)) {
+        if (!PLUGIN_MANIFEST_FIELDS.has(field)) {
+            results.push({
+                ruleId: 'manifest-unknown-field',
+                enforcement: 'policy',
+                message: `Plugin manifest contains unknown field: ${field}.`,
+                severity: 'warning',
+                status: 'failed',
+                coverage: 'partial',
+                check: 'manifest'
+            });
+        }
+    }
+    for (const field of PLUGIN_RECOMMENDED_FIELDS) {
+        if (!Object.prototype.hasOwnProperty.call(manifest, field)) {
+            results.push({
+                ruleId: 'manifest-missing-recommended-field',
+                enforcement: 'policy',
+                message: `Plugin manifest is missing recommended field: ${field}.`,
+                severity: 'warning',
+                status: 'failed',
+                coverage: 'partial',
+                check: 'manifest'
+            });
+        }
+    }
     return results;
 }
-function validateThemeManifest(manifest) {
+function validateThemeManifest(manifest, immutableIdentifierExempt = false) {
     const results = [];
     if (typeof manifest.name !== 'string' || manifest.name.trim().length === 0) {
         results.push({
+            ruleId: 'manifest-missing-required-field',
+            enforcement: 'correctness',
             message: 'Theme manifest is missing required field: name.',
             severity: 'error',
+            status: 'failed',
+            coverage: 'partial',
             check: 'manifest'
         });
+    }
+    else {
+        results.push(...validateBannedWords(manifest.name, 'Theme name', 'manifest-disallowed-name', immutableIdentifierExempt));
+        if (manifest.name.length > 50) {
+            results.push({
+                ruleId: 'manifest-name-too-long',
+                enforcement: 'policy',
+                message: `Theme manifest name is too long (${manifest.name.length} chars). The maximum is 50 characters.`,
+                severity: 'warning',
+                status: 'failed',
+                coverage: 'partial',
+                check: 'manifest'
+            });
+        }
+        if (isAllCaps(manifest.name)) {
+            results.push({
+                ruleId: 'manifest-name-all-caps',
+                enforcement: 'policy',
+                message: 'Theme manifest name should not be written in all caps.',
+                severity: 'warning',
+                status: 'failed',
+                coverage: 'partial',
+                check: 'manifest'
+            });
+        }
     }
     if (typeof manifest.version !== 'string' ||
         manifest.version.trim().length === 0) {
         results.push({
+            ruleId: 'manifest-missing-required-field',
+            enforcement: 'correctness',
             message: 'Theme manifest is missing required field: version.',
             severity: 'error',
+            status: 'failed',
+            coverage: 'partial',
             check: 'manifest'
         });
     }
     else {
         results.push(...validateSemver(manifest.version, 'version'));
-    }
-    if (manifest.minAppVersion !== undefined) {
-        if (typeof manifest.minAppVersion !== 'string') {
+        if (manifest.version === '0.0.0') {
             results.push({
-                message: 'Theme manifest field minAppVersion must be a string.',
+                ruleId: 'manifest-version-placeholder',
+                enforcement: 'policy',
+                message: 'Theme manifest version must not use the 0.0.0 placeholder.',
                 severity: 'error',
+                status: 'failed',
+                coverage: 'partial',
                 check: 'manifest'
             });
         }
-        else {
-            results.push(...validateSemver(manifest.minAppVersion, 'minAppVersion'));
-        }
+    }
+    if (typeof manifest.minAppVersion === 'string' &&
+        manifest.minAppVersion.trim().length === 0) {
+        results.push({
+            ruleId: 'manifest-missing-required-field',
+            enforcement: 'correctness',
+            message: 'Theme manifest is missing required field: minAppVersion.',
+            severity: 'error',
+            status: 'failed',
+            coverage: 'partial',
+            check: 'manifest'
+        });
+    }
+    else if (manifest.minAppVersion === undefined) {
+        results.push({
+            ruleId: 'manifest-missing-required-field',
+            enforcement: 'correctness',
+            message: 'Theme manifest is missing required field: minAppVersion.',
+            severity: 'error',
+            status: 'failed',
+            coverage: 'partial',
+            check: 'manifest'
+        });
+    }
+    else if (typeof manifest.minAppVersion !== 'string') {
+        results.push({
+            ruleId: 'manifest-invalid-field-type',
+            enforcement: 'correctness',
+            message: 'Theme manifest field minAppVersion must be a string.',
+            severity: 'error',
+            status: 'failed',
+            coverage: 'partial',
+            check: 'manifest'
+        });
+    }
+    else {
+        results.push(...validateSemver(manifest.minAppVersion, 'minAppVersion'));
+    }
+    if (typeof manifest.author !== 'string' ||
+        manifest.author.trim().length === 0) {
+        results.push({
+            ruleId: 'manifest-missing-required-field',
+            enforcement: 'correctness',
+            message: 'Theme manifest is missing required field: author.',
+            severity: 'error',
+            status: 'failed',
+            coverage: 'partial',
+            check: 'manifest'
+        });
+    }
+    else {
+        results.push(...validateAuthor(manifest.author, 'Theme'));
     }
     if (manifest.authorUrl !== undefined) {
         results.push(...validateUrl(manifest.authorUrl, 'authorUrl'));
+    }
+    for (const field of Object.keys(manifest)) {
+        if (!THEME_MANIFEST_FIELDS.has(field)) {
+            results.push({
+                ruleId: 'manifest-unknown-field',
+                enforcement: 'policy',
+                message: `Theme manifest contains unknown field: ${field}.`,
+                severity: 'warning',
+                status: 'failed',
+                coverage: 'partial',
+                check: 'manifest'
+            });
+        }
     }
     return results;
 }
@@ -30352,16 +31116,24 @@ function validateVersionsJson(workspacePath) {
     }
     catch {
         results.push({
+            ruleId: 'versions-invalid-json',
+            enforcement: 'policy',
             message: 'versions.json is not valid JSON.',
             severity: 'error',
+            status: 'failed',
+            coverage: 'partial',
             check: 'versions'
         });
         return results;
     }
     if (typeof data !== 'object' || data === null || Array.isArray(data)) {
         results.push({
+            ruleId: 'versions-invalid-format',
+            enforcement: 'policy',
             message: 'versions.json must be a JSON object mapping plugin versions to minimum app versions.',
             severity: 'error',
+            status: 'failed',
+            coverage: 'partial',
             check: 'versions'
         });
         return results;
@@ -30369,60 +31141,68 @@ function validateVersionsJson(workspacePath) {
     for (const [pluginVersion, minApp] of Object.entries(data)) {
         if (!SEMVER_REGEX.test(pluginVersion)) {
             results.push({
+                ruleId: 'versions-invalid-semver',
+                enforcement: 'policy',
                 message: `versions.json key "${pluginVersion}" is not valid semver.`,
                 severity: 'warning',
+                status: 'failed',
+                coverage: 'partial',
                 check: 'versions'
             });
         }
         if (typeof minApp !== 'string' || !SEMVER_REGEX.test(minApp)) {
             results.push({
+                ruleId: 'versions-invalid-semver',
+                enforcement: 'policy',
                 message: `versions.json value for "${pluginVersion}" is not a valid semver string.`,
                 severity: 'warning',
+                status: 'failed',
+                coverage: 'partial',
                 check: 'versions'
             });
         }
     }
     return results;
 }
-function validateManifest(workspacePath, projectType) {
+function validateManifest(workspacePath, projectType, immutableIdentifierExempt = false) {
     const manifest = readManifest(workspacePath);
     if (manifest === null) {
         return [
             {
+                ruleId: 'manifest-invalid-json',
+                enforcement: 'correctness',
                 message: 'manifest.json not found or is not valid JSON.',
                 severity: 'error',
+                status: 'failed',
+                coverage: 'partial',
                 check: 'manifest'
             }
         ];
     }
     const obj = manifest;
     if (projectType === 'plugin') {
-        if (!isPluginManifest(obj)) {
+        const hasOnlyInvalidDesktopFlag = Object.prototype.hasOwnProperty.call(obj, 'isDesktopOnly') &&
+            isPluginManifest({ ...obj, isDesktopOnly: undefined });
+        if (!isPluginManifest(obj) && !hasOnlyInvalidDesktopFlag) {
             return [
                 {
+                    ruleId: 'manifest-schema-invalid',
+                    enforcement: 'correctness',
                     message: 'manifest.json does not match the plugin schema. ' +
                         'Required fields: id (string), name (string), version (string), description (string).',
                     severity: 'error',
+                    status: 'failed',
+                    coverage: 'partial',
                     check: 'manifest'
                 }
             ];
         }
         return [
-            ...validatePluginManifest(obj),
+            ...locateManifestFindings(workspacePath, validatePluginManifest(obj, immutableIdentifierExempt)),
             ...validateVersionsJson(workspacePath)
         ];
     }
-    if (!isThemeManifest(obj)) {
-        return [
-            {
-                message: 'manifest.json does not match the theme schema. ' +
-                    'Required fields: name (string), version (string).',
-                severity: 'error',
-                check: 'manifest'
-            }
-        ];
-    }
-    return validateThemeManifest(obj);
+    return locateManifestFindings(workspacePath, validateThemeManifest(obj, immutableIdentifierExempt));
 }
 
 const OSI_APPROVED_SPDX = new Set([
@@ -30594,8 +31374,12 @@ function checkLicense(workspacePath) {
     const licenseFile = findLicenseFile(workspacePath);
     if (!licenseFile) {
         results.push({
+            ruleId: 'license-missing',
+            enforcement: 'policy',
             message: 'No LICENSE file found in the repository root.',
             severity: 'error',
+            status: 'failed',
+            coverage: 'partial',
             check: 'license'
         });
         return results;
@@ -30603,8 +31387,12 @@ function checkLicense(workspacePath) {
     const spdx = detectSpdxFromPackageJson(workspacePath);
     if (spdx && !OSI_APPROVED_SPDX.has(spdx)) {
         results.push({
+            ruleId: 'license-not-osi-approved',
+            enforcement: 'policy',
             message: `License "${spdx}" in package.json is not an OSI-approved license.`,
             severity: 'warning',
+            status: 'failed',
+            coverage: 'partial',
             check: 'license'
         });
     }
@@ -30617,6 +31405,47 @@ const README_FILE_NAMES = [
     'README',
     'Readme.md'
 ];
+const SAMPLE_PLUGIN_PHRASES = [
+    'this is a sample plugin for obsidian',
+    'this project uses typescript to provide type checking and documentation',
+    'the repository depends on the latest plugin api',
+    'you can create a new obsidian plugin',
+    'releasing new releases'
+];
+const README_PLACEHOLDER_REGEX = /\b(?:TODO|FIXME)\b|<your|yourusername|plugin-name|lorem ipsum/i;
+const PROMOTIONAL_LANGUAGE_REGEX = /\b(?:amazing|awesome|best|effortless(?:ly)?|game[- ]changing|incredible|must[- ]have|powerful|revolutionary|seamless(?:ly)?|supercharge|transform(?:ative)?|ultimate)\b/gi;
+function readManifestName(workspacePath) {
+    try {
+        const raw = fs$1.readFileSync(path$2.join(workspacePath, 'manifest.json'), 'utf-8');
+        const manifest = JSON.parse(raw);
+        if (typeof manifest !== 'object' || manifest === null)
+            return null;
+        const name = manifest.name;
+        return typeof name === 'string' ? name : null;
+    }
+    catch {
+        return null;
+    }
+}
+function normalizeName(value) {
+    return value
+        .toLowerCase()
+        .replace(/[^\p{L}\p{N}\s]/gu, '')
+        .replace(/\s+/g, ' ')
+        .trim();
+}
+function readableText(content) {
+    return content
+        .replace(/```[\s\S]*?```|~~~[\s\S]*?~~~/g, '')
+        .replace(/^ {4}.*$/gm, '')
+        .replace(/`[^`]*`/g, '')
+        .replace(/!\[[^\]]*\]\([^)]*\)/g, '')
+        .replace(/<img\b[^>]*>/gi, '')
+        .replace(/<[^>]+>/g, '')
+        .replace(/[#>*_~\[\]()-]/g, ' ')
+        .replace(/\s+/g, ' ')
+        .trim();
+}
 function checkReadme(workspacePath) {
     const results = [];
     let readmePath = null;
@@ -30629,8 +31458,12 @@ function checkReadme(workspacePath) {
     }
     if (!readmePath) {
         results.push({
+            ruleId: 'readme-missing',
+            enforcement: 'policy',
             message: 'No README file found in the repository root.',
             severity: 'error',
+            status: 'failed',
+            coverage: 'partial',
             check: 'readme'
         });
         return results;
@@ -30638,607 +31471,103 @@ function checkReadme(workspacePath) {
     const content = fs$1.readFileSync(readmePath, 'utf-8').trim();
     if (content.length === 0) {
         results.push({
+            ruleId: 'readme-empty',
+            enforcement: 'policy',
             message: 'README file is empty.',
             severity: 'error',
+            status: 'failed',
+            coverage: 'partial',
             check: 'readme'
         });
     }
-    else if (content.length < 50) {
+    else if (content.length < 200) {
         results.push({
+            ruleId: 'readme-too-short',
+            enforcement: 'policy',
             message: `README is very short (${content.length} chars). Consider adding more documentation.`,
             severity: 'warning',
+            status: 'failed',
+            coverage: 'partial',
             check: 'readme'
         });
     }
-    return results;
-}
-
-function hasPackageJson(workspacePath) {
-    return fs$1.existsSync(path$2.join(workspacePath, 'package.json'));
-}
-async function ensureUserDeps(workspacePath) {
-    if (!hasPackageJson(workspacePath))
-        return true;
-    if (fs$1.existsSync(path$2.join(workspacePath, 'node_modules')))
-        return true;
-    info('Installing user dependencies for type resolution...');
-    const hasLockfile = fs$1.existsSync(path$2.join(workspacePath, 'package-lock.json'));
-    const installCmd = hasLockfile ? 'npm ci' : 'npm install';
-    const exitCode = await exec(installCmd, [], {
-        cwd: workspacePath,
-        ignoreReturnCode: true
-    });
-    return exitCode === 0;
-}
-
-const BUILD_SCRIPTS_PRIORITY = ['build', 'build:plugin', 'compile'];
-function detectBuildScript(workspacePath) {
-    const pkgPath = path$2.join(workspacePath, 'package.json');
-    if (!fs$1.existsSync(pkgPath))
-        return null;
-    try {
-        const raw = fs$1.readFileSync(pkgPath, 'utf-8');
-        const pkg = JSON.parse(raw);
-        const scripts = pkg.scripts;
-        if (!scripts)
-            return null;
-        for (const scriptName of BUILD_SCRIPTS_PRIORITY) {
-            if (scripts[scriptName])
-                return scriptName;
-        }
-    }
-    catch {
-        /* invalid package.json — no build script to detect */
-    }
-    return null;
-}
-async function runBuild(workspacePath, projectType, explicitBuildCommand) {
-    const results = [];
-    if (explicitBuildCommand === 'false') {
-        info('Build step disabled via input.');
-        return results;
-    }
-    let buildCommand = null;
-    if (explicitBuildCommand) {
-        buildCommand = explicitBuildCommand;
-    }
-    else if (projectType === 'plugin' && hasPackageJson(workspacePath)) {
-        const detected = detectBuildScript(workspacePath);
-        if (detected) {
-            buildCommand = `npm run ${detected}`;
-            info(`Auto-detected build script: "${detected}"`);
-        }
-    }
-    if (!buildCommand) {
-        if (projectType === 'plugin' && hasPackageJson(workspacePath)) {
-            info('No build script found (checked: build, build:plugin, compile). Skipping build.');
-        }
-        return results;
-    }
-    const installed = await ensureUserDeps(workspacePath);
-    if (!installed) {
+    const lowerContent = content.toLowerCase();
+    const samplePhraseCount = SAMPLE_PLUGIN_PHRASES.filter((phrase) => lowerContent.includes(phrase)).length;
+    if (samplePhraseCount >= 2) {
         results.push({
-            message: 'Dependency installation failed.',
+            ruleId: 'readme-sample-template',
+            enforcement: 'policy',
+            message: 'README contains unmodified text from the Obsidian sample plugin template.',
             severity: 'error',
-            check: 'build'
-        });
-        return results;
-    }
-    info(`Running build: ${buildCommand}`);
-    const [cmd, ...args] = buildCommand.split(' ');
-    const exitCode = await exec(cmd, args, {
-        cwd: workspacePath,
-        ignoreReturnCode: true
-    });
-    if (exitCode !== 0) {
-        results.push({
-            message: `Build failed (exit code ${exitCode}). Command: "${buildCommand}".`,
-            severity: 'error',
-            check: 'build'
+            status: 'failed',
+            coverage: 'partial',
+            check: 'readme'
         });
     }
-    return results;
-}
-
-const SCANNER_STYLELINT_CONFIG = {
-    plugins: ['stylelint-no-unsupported-browser-features'],
-    ignoreDisables: true,
-    ignoreFiles: [
-        'node_modules',
-        'dist',
-        'build',
-        'pkg',
-        'test-vault',
-        '.obsidian',
-        '**/.obsidian/**',
-        'esbuild.config.mjs',
-        'version-bump.mjs',
-        '**/*.test.*',
-        '**/*.tests.*',
-        '**/*.spec.*',
-        '**/*.specs.*',
-        '**/test/**',
-        '**/tests/**',
-        '**/__tests__/**',
-        '**/mocks/**',
-        '**/__mocks__/**',
-        '**/*.cjs',
-        '**/*.mjs',
-        '**/*.cts',
-        '**/*.mts',
-        '**/vite*',
-        '**/scripts/**',
-        '**/docs/**',
-        '**/i18n/**',
-        '**/i18next/**',
-        '**/locale/**',
-        '**/locales/**',
-        '**/translations/**',
-        '**/l10n/**',
-        '.pnpm-store',
-        '**/*.spec.ts',
-        '**/testUtils**',
-        'automation/**',
-        'e2e-tests/**'
-    ],
-    rules: {
-        'function-url-scheme-disallowed-list': [
-            ['http', 'https', 'file'],
-            {
-                severity: 'error',
-                message: 'External URLs are not allowed in themes. To embed images & fonts encode them as base64 <https://docs.obsidian.md/Themes/App+themes/Embed+fonts+and+images+in+your+theme>'
-            }
-        ],
-        'function-url-scheme-allowed-list': ['data'],
-        'declaration-no-important': [
-            true,
-            {
-                severity: 'warning',
-                message: 'Avoid !important — override styles by increasing selector specificity or using CSS variables instead.'
-            }
-        ],
-        'color-named': [
-            'never',
-            {
-                severity: 'warning',
-                message: 'Use hex colors or Obsidian CSS variables instead of named colors to ensure proper light/dark theme support. <https://docs.obsidian.md/Reference/CSS+variables/CSS+variables>'
-            }
-        ],
-        'custom-property-no-missing-var-function': null,
-        'no-duplicate-selectors': null,
-        'no-duplicate-at-import-rules': null,
-        'declaration-block-no-duplicate-properties': [
-            true,
-            { severity: 'warning' }
-        ],
-        'shorthand-property-no-redundant-values': null,
-        'plugin/no-unsupported-browser-features': [
-            true,
-            {
-                severity: 'warning',
-                browsers: ['electron >= 39'],
-                ignore: ['css-nesting', 'css-cascade-layers']
-            }
-        ],
-        'selector-pseudo-class-disallowed-list': [
-            ['has'],
-            {
-                severity: 'warning',
-                message: 'Avoid :has() — it can cause significant performance issues due to broad selector invalidation.'
-            }
-        ],
-        'selector-pseudo-class-no-unknown': [
-            true,
-            {
-                ignorePseudoClasses: ['global', 'local'],
-                severity: 'warning'
-            }
-        ],
-        'selector-pseudo-element-no-unknown': [true, { severity: 'warning' }],
-        'selector-type-no-unknown': [
-            true,
-            { ignoreTypes: [], severity: 'warning' }
-        ],
-        'at-rule-no-unknown': [
-            true,
-            {
-                ignoreAtRules: ['layer', 'property', 'container'],
-                severity: 'warning'
-            }
-        ],
-        'unit-no-unknown': [true, { severity: 'warning' }],
-        'property-disallowed-list': [['all'], { severity: 'warning' }]
-    }
-};
-// Source: community-workers/src/worker/electronVersions.json
-const ELECTRON_VERSIONS = {
-    25: '1.4.5',
-    28: '1.5.8',
-    30: '1.6.5',
-    31: '1.7.4',
-    37: '1.9.12',
-    39: '1.11.4'
-};
-const DEFAULT_ELECTRON = 39;
-function semverToNum(v) {
-    const [major = 0, minor = 0, patch = 0] = v.split('.').map(Number);
-    return major * 100_000 + minor * 1_000 + patch;
-}
-function getMinElectronVersion(minAppVersion) {
-    if (!minAppVersion)
-        return DEFAULT_ELECTRON;
-    const target = semverToNum(minAppVersion);
-    let result = Math.min(...Object.keys(ELECTRON_VERSIONS).map(Number));
-    for (const [electronStr, obsidianVersion] of Object.entries(ELECTRON_VERSIONS)) {
-        const electron = Number(electronStr);
-        if (semverToNum(obsidianVersion) <= target) {
-            result = Math.max(result, electron);
-        }
-    }
-    return result;
-}
-function buildStylelintConfig(minAppVersion) {
-    const minElectron = getMinElectronVersion(minAppVersion);
-    const config = JSON.parse(JSON.stringify(SCANNER_STYLELINT_CONFIG));
-    config.rules['plugin/no-unsupported-browser-features'][1].browsers = [
-        `electron >= ${minElectron}`
-    ];
-    return config;
-}
-const SCANNER_STYLELINT_DEPS = {
-    stylelint: '17.6.0',
-    'stylelint-no-unsupported-browser-features': '8.1.1'
-};
-const SCANNER_ESLINT_DEPS = {
-    eslint: '9.37.0',
-    'eslint-plugin-obsidianmd': '0.4.1',
-    'typescript-eslint': '8.61.1'
-};
-async function createScannerDepsDir(deps) {
-    const tempDir = fs$1.mkdtempSync(path$2.join(os$1.tmpdir(), 'obsidian-scanner-lint-'));
-    const pkg = {
-        name: 'obsidian-scanner-lint',
-        private: true,
-        dependencies: deps
-    };
-    fs$1.writeFileSync(path$2.join(tempDir, 'package.json'), JSON.stringify(pkg));
-    const exitCode = await exec('npm', ['install'], {
-        cwd: tempDir,
-        ignoreReturnCode: true
-    });
-    if (exitCode !== 0) {
-        fs$1.rmSync(tempDir, { recursive: true, force: true });
-        throw new Error('Failed to install scanner lint dependencies.');
-    }
-    return tempDir;
-}
-async function runUserLint(workspacePath) {
-    const results = [];
-    const pkgPath = path$2.join(workspacePath, 'package.json');
-    if (!fs$1.existsSync(pkgPath)) {
-        info('No package.json found. Skipping user lint.');
-        return results;
-    }
-    try {
-        const raw = fs$1.readFileSync(pkgPath, 'utf-8');
-        const pkg = JSON.parse(raw);
-        const scripts = pkg.scripts;
-        if (!scripts?.lint) {
-            info('No "lint" script in package.json. Skipping user lint.');
-            return results;
-        }
-    }
-    catch {
-        return results;
-    }
-    info('Running user lint script...');
-    const exitCode = await exec('npm', ['run', 'lint'], {
-        cwd: workspacePath,
-        ignoreReturnCode: true
-    });
-    if (exitCode !== 0) {
+    if (README_PLACEHOLDER_REGEX.test(content)) {
         results.push({
-            message: `User lint script failed (exit code ${exitCode}).`,
+            ruleId: 'readme-placeholder',
+            enforcement: 'policy',
+            message: 'README contains unfilled placeholder text.',
             severity: 'warning',
-            check: 'lint'
+            status: 'failed',
+            coverage: 'partial',
+            check: 'readme'
         });
     }
-    return results;
-}
-async function runScannerStylelint(workspacePath, projectType, minAppVersion) {
-    const results = [];
-    info('Installing scanner stylelint dependencies...');
-    let scannerDir;
-    try {
-        scannerDir = await createScannerDepsDir(SCANNER_STYLELINT_DEPS);
-    }
-    catch {
+    const imageCount = (content.match(/!\[[^\]]*\]\([^)]*\)/g)?.length ?? 0) +
+        (content.match(/<img\b[^>]*>/gi)?.length ?? 0);
+    const text = readableText(content);
+    if (imageCount >= 2 && text.length < 150) {
         results.push({
-            message: 'Failed to install scanner stylelint dependencies.',
-            severity: 'error',
-            check: 'lint'
+            ruleId: 'readme-screenshots-only',
+            enforcement: 'policy',
+            message: 'README relies on screenshots without enough explanatory text.',
+            severity: 'warning',
+            status: 'failed',
+            coverage: 'partial',
+            check: 'readme'
         });
-        return results;
     }
-    const configPath = path$2.join(workspacePath, '.stylelintrc.scanner.json');
-    const config = buildStylelintConfig(minAppVersion);
-    fs$1.writeFileSync(configPath, JSON.stringify(config));
-    try {
-        const targetFiles = projectType === 'theme'
-            ? [path$2.join(workspacePath, 'theme.css')]
-            : ['**/*.css'];
-        const existingFiles = targetFiles.filter((f) => {
-            if (f.includes('*'))
-                return true;
-            return fs$1.existsSync(f);
-        });
-        if (existingFiles.length === 0) {
-            info('No CSS files found to lint.');
-            return results;
-        }
-        info('Running scanner stylelint...');
-        const exitCode = await exec('npx', [
-            '--prefix',
-            scannerDir,
-            'stylelint',
-            ...existingFiles,
-            '--config',
-            configPath,
-            '--config-basedir',
-            path$2.join(scannerDir, 'node_modules')
-        ], {
-            cwd: workspacePath,
-            ignoreReturnCode: true,
-            env: {
-                ...process.env,
-                NODE_PATH: path$2.join(scannerDir, 'node_modules')
-            }
-        });
-        if (exitCode !== 0 && exitCode !== 2) {
-            results.push({
-                message: `Scanner stylelint failed (exit code ${exitCode}).`,
-                severity: 'error',
-                check: 'lint'
-            });
-        }
-        else if (exitCode === 2) {
-            results.push({
-                message: 'Scanner stylelint found issues. Review the output above for details.',
-                severity: 'warning',
-                check: 'lint'
-            });
-        }
-    }
-    finally {
-        fs$1.rmSync(scannerDir, { recursive: true, force: true });
-        if (fs$1.existsSync(configPath))
-            fs$1.unlinkSync(configPath);
-    }
-    return results;
-}
-function buildScannerEslintConfig(hasTsconfig) {
-    if (!hasTsconfig) {
-        return `import obsidianmd from "eslint-plugin-obsidianmd";
-import { globalIgnores } from "eslint/config";
-
-const IGNORES = ${JSON.stringify(SCANNER_STYLELINT_CONFIG.ignoreFiles)};
-
-export default [
-  globalIgnores(IGNORES),
-  { ignores: ["eslint.config.scanner.mjs", "main.js", "styles.css", "manifest.json"] },
-  ...obsidianmd.configs.recommended.map(config => {
-    if (config.rules) {
-      const filtered = { ...config.rules };
-      delete filtered["obsidianmd/no-plugin-as-component"];
-      delete filtered["obsidianmd/no-view-references-in-plugin"];
-      delete filtered["obsidianmd/no-unsupported-api"];
-      delete filtered["obsidianmd/prefer-create-el"];
-      delete filtered["obsidianmd/prefer-file-manager-trash-file"];
-      delete filtered["obsidianmd/prefer-instanceof"];
-      return { ...config, rules: filtered };
-    }
-    return config;
-  })
-];
-`;
-    }
-    return `import { cwd } from "node:process";
-import { globalIgnores } from "eslint/config";
-import obsidianmd from "eslint-plugin-obsidianmd";
-import tseslint from "typescript-eslint";
-
-const IGNORES = ${JSON.stringify(SCANNER_STYLELINT_CONFIG.ignoreFiles)};
-
-function toWarns(config) {
-  if (!config) return config;
-  if (!Array.isArray(config) && typeof config[Symbol.iterator] === "function") {
-    return [...config].map(toWarns);
-  }
-  if (Array.isArray(config)) return config.map(toWarns);
-  const result = { ...config };
-  if (result.extends) result.extends = toWarns(result.extends);
-  if (result.rules) {
-    result.rules = Object.fromEntries(
-      Object.entries(result.rules).map(([key, value]) => {
-        if (key.startsWith("eslint-comments/")) return [key, value];
-        if (value === "error" || value === 2) return [key, "warn"];
-        if (Array.isArray(value) && (value[0] === "error" || value[0] === 2)) return [key, ["warn", ...value.slice(1)]];
-        return [key, value];
-      })
-    );
-  }
-  return result;
-}
-
-export default [
-  {
-    languageOptions: {
-      parserOptions: {
-        projectService: {
-          allowDefaultProject: [
-            "eslint.config.js",
-            "eslint.config.mjs",
-            "eslint.config.mts",
-          ]
-        },
-        tsconfigRootDir: cwd(),
-        extraFileExtensions: [".json"]
-      },
-    },
-  },
-  ...toWarns(obsidianmd.configs.recommended),
-  {
-    linterOptions: {
-      noInlineConfig: false,
-      reportUnusedDisableDirectives: "off",
-      reportUnusedInlineConfigs: "off",
-    },
-  },
-  {
-    files: ["**/*.{ts,cts,mts,tsx,js,cjs,mjs,jsx}"],
-    rules: {
-      "no-eval": "error",
-      "no-implied-eval": "error",
-      "no-unsanitized/method": "error",
-      "no-unsanitized/property": "error",
-      "obsidianmd/regex-lookbehind": "error",
-      "obsidianmd/no-forbidden-elements": "error",
-
-      "no-undef": "off",
-      "@typescript-eslint/no-unsafe-member-access": "off",
-      "@typescript-eslint/no-unsafe-assignment": "off",
-      "@typescript-eslint/no-unsafe-argument": "off",
-      "@typescript-eslint/no-unsafe-call": "off",
-      "@typescript-eslint/no-unsafe-return": "off",
-      "@typescript-eslint/restrict-template-expressions": "off",
-      "@typescript-eslint/no-base-to-string": "off",
-      "import/no-unresolved": "off",
-
-      "obsidianmd/validate-manifest": "off",
-      "obsidianmd/validate-license": "off",
-
-      "obsidianmd/commands/no-command-in-command-id": "off",
-      "obsidianmd/commands/no-plugin-id-in-command-id": "off",
-    }
-  },
-  {
-    files: ["**/*.ts", "**/*.tsx", "**/*.js", "**/*.jsx"],
-    rules: {
-      "obsidianmd/ui/sentence-case": "off",
-      "obsidianmd/ui/sentence-case-json": "off",
-      "obsidianmd/ui/sentence-case-locale-module": "off",
-    }
-  },
-  {
-    files: ["**/*.ts", "**/*.tsx", "**/*.js", "**/*.jsx"],
-    rules: {
-      "eslint-comments/require-description": "error",
-    }
-  },
-  {
-    files: ["**/*.ts", "**/*.tsx", "**/*.js", "**/*.jsx"],
-    plugins: {
-      "@typescript-eslint": tseslint.plugin,
-      "obsidianmd": obsidianmd,
-    },
-    rules: {
-      "@typescript-eslint/no-unsafe-member-access": "warn",
-      "@typescript-eslint/no-unsafe-assignment": "warn",
-      "@typescript-eslint/no-unsafe-argument": "warn",
-      "@typescript-eslint/no-unsafe-call": "warn",
-      "@typescript-eslint/no-unsafe-return": "warn",
-
-      "obsidianmd/commands/no-command-in-command-id": "warn",
-      "obsidianmd/commands/no-plugin-id-in-command-id": "warn",
-
-      "obsidianmd/settings-tab/no-manual-html-headings": "error",
-      "obsidianmd/settings-tab/no-problematic-settings-headings": "error",
-      "obsidianmd/sample-names": "error",
-      "obsidianmd/no-sample-code": "error",
-      "obsidianmd/platform": "error",
-      "obsidianmd/no-plugin-as-component": "error",
-      "obsidianmd/detach-leaves": "error",
-      "obsidianmd/no-static-styles-assignment": "error",
-      "obsidianmd/no-view-references-in-plugin": "error",
-      "obsidianmd/no-unsupported-api": "error",
-    }
-  },
-  globalIgnores(IGNORES),
-  { ignores: ["eslint.config.scanner.mjs", "main.js", "styles.css", "manifest.json"] },
-];
-`;
-}
-async function runScannerEslint(workspacePath) {
-    const results = [];
-    const hasTsconfig = fs$1.existsSync(path$2.join(workspacePath, 'tsconfig.json'));
-    await ensureUserDeps(workspacePath);
-    info('Installing scanner ESLint dependencies...');
-    let scannerDir;
-    try {
-        scannerDir = await createScannerDepsDir(SCANNER_ESLINT_DEPS);
-    }
-    catch {
+    const promotionalMatches = content.match(PROMOTIONAL_LANGUAGE_REGEX)?.length ?? 0;
+    if (promotionalMatches >= 3) {
         results.push({
-            message: 'Failed to install scanner ESLint dependencies.',
-            severity: 'error',
-            check: 'lint'
+            ruleId: 'readme-promotional-language',
+            enforcement: 'policy',
+            message: 'README uses excessive promotional language.',
+            severity: 'recommendation',
+            status: 'failed',
+            coverage: 'partial',
+            check: 'readme'
         });
-        return results;
     }
-    const configContent = buildScannerEslintConfig(hasTsconfig);
-    const configPath = path$2.join(scannerDir, 'eslint.config.scanner.mjs');
-    fs$1.writeFileSync(configPath, configContent);
-    try {
-        info(hasTsconfig
-            ? 'Running scanner ESLint with type-aware rules...'
-            : 'Running scanner ESLint without type-aware rules (no tsconfig.json)...');
-        const nodePath = [
-            path$2.join(scannerDir, 'node_modules'),
-            path$2.join(workspacePath, 'node_modules')
-        ].join(path$2.delimiter);
-        const exitCode = await exec('npx', [
-            '--prefix',
-            scannerDir,
-            'eslint',
-            '--config',
-            configPath,
-            '--no-error-on-unmatched-pattern',
-            '.'
-        ], {
-            cwd: workspacePath,
-            ignoreReturnCode: true,
-            env: {
-                ...process.env,
-                NODE_PATH: nodePath
-            }
+    const letters = content.match(/\p{L}/gu) ?? [];
+    const outsideLatin = letters.filter((letter) => (letter.codePointAt(0) ?? 0) > 0x024f).length;
+    if (letters.length >= 50 && outsideLatin / letters.length > 0.5) {
+        results.push({
+            ruleId: 'readme-non-english',
+            enforcement: 'policy',
+            message: 'README should include primarily English documentation.',
+            severity: 'warning',
+            status: 'failed',
+            coverage: 'partial',
+            check: 'readme'
         });
-        if (exitCode !== 0) {
-            results.push({
-                message: `Scanner ESLint found issues (exit code ${exitCode}). Review the output above.`,
-                severity: 'warning',
-                check: 'lint'
-            });
-        }
     }
-    finally {
-        fs$1.rmSync(scannerDir, { recursive: true, force: true });
-    }
-    return results;
-}
-async function runLint(workspacePath, projectType, useScannerLint, mode) {
-    const results = [];
-    const effectiveScannerLint = mode === 'release' || useScannerLint;
-    if (!effectiveScannerLint) {
-        results.push(...(await runUserLint(workspacePath)));
-        return results;
-    }
-    const manifest = readManifest(workspacePath);
-    const minAppVersion = manifest && typeof manifest === 'object'
-        ? manifest.minAppVersion
-        : undefined;
-    results.push(...(await runScannerStylelint(workspacePath, projectType, minAppVersion)));
-    if (projectType === 'plugin') {
-        results.push(...(await runScannerEslint(workspacePath)));
+    const firstHeading = content.match(/^#\s+(.+)$/m)?.[1];
+    const manifestName = readManifestName(workspacePath);
+    if (firstHeading !== undefined &&
+        manifestName !== null &&
+        normalizeName(firstHeading) !== normalizeName(manifestName)) {
+        results.push({
+            ruleId: 'readme-name-mismatch',
+            enforcement: 'policy',
+            message: 'The first README heading should match the plugin manifest name.',
+            severity: 'warning',
+            status: 'failed',
+            coverage: 'partial',
+            check: 'readme'
+        });
     }
     return results;
 }
@@ -64269,6 +64598,1245 @@ const context = new Context();
 function getOctokit(token, options, ...additionalPlugins) {
     const GitHubWithPlugins = GitHub.plugin(...additionalPlugins);
     return new GitHubWithPlugins(getOctokitOptions(token, options));
+}
+
+const PLUGIN_REGISTRY_URL = 'https://raw.githubusercontent.com/obsidianmd/obsidian-releases/master/community-plugins.json';
+const THEME_REGISTRY_URL = 'https://raw.githubusercontent.com/obsidianmd/obsidian-releases/master/community-css-themes.json';
+function readRegistryKey(workspacePath, projectType) {
+    try {
+        const manifest = JSON.parse(fs$1.readFileSync(path$2.join(workspacePath, 'manifest.json'), 'utf8'));
+        if (typeof manifest !== 'object' || manifest === null)
+            return null;
+        const key = manifest[projectType === 'plugin' ? 'id' : 'name'];
+        return typeof key === 'string' ? key : null;
+    }
+    catch {
+        return null;
+    }
+}
+function parseRegistry(value) {
+    if (!Array.isArray(value))
+        throw new Error('Registry response is not an array');
+    return value.map((entry) => {
+        if (typeof entry !== 'object' || entry === null) {
+            throw new Error('Registry entry is not an object');
+        }
+        const record = entry;
+        if (typeof record.repo !== 'string') {
+            throw new Error('Registry entry has no repository');
+        }
+        return {
+            repo: record.repo,
+            id: typeof record.id === 'string' ? record.id : undefined,
+            name: typeof record.name === 'string' ? record.name : undefined
+        };
+    });
+}
+function unavailableFinding$1() {
+    return {
+        ruleId: 'registry-unavailable',
+        enforcement: 'policy',
+        check: 'registry',
+        message: 'The Obsidian community registry could not be checked.',
+        severity: 'warning',
+        status: 'inconclusive',
+        coverage: 'unavailable'
+    };
+}
+async function inspectRegistry(workspacePath, projectType) {
+    const key = readRegistryKey(workspacePath, projectType);
+    if (!key)
+        return { findings: [], immutableIdentifierExempt: false };
+    const url = projectType === 'plugin' ? PLUGIN_REGISTRY_URL : THEME_REGISTRY_URL;
+    let entries;
+    try {
+        const response = await fetch(url, {
+            signal: AbortSignal.timeout(10_000)
+        });
+        if (!response.ok)
+            return {
+                findings: [unavailableFinding$1()],
+                immutableIdentifierExempt: false
+            };
+        entries = parseRegistry((await response.json()));
+    }
+    catch {
+        return {
+            findings: [unavailableFinding$1()],
+            immutableIdentifierExempt: false
+        };
+    }
+    const conflict = entries.find((entry) => projectType === 'plugin' ? entry.id === key : entry.name === key);
+    if (!conflict)
+        return { findings: [], immutableIdentifierExempt: false };
+    const repository = process.env.GITHUB_REPOSITORY;
+    if (repository?.toLowerCase() === conflict.repo.toLowerCase()) {
+        return { findings: [], immutableIdentifierExempt: true };
+    }
+    if (context.payload.repository?.fork === true) {
+        return {
+            immutableIdentifierExempt: false,
+            findings: [
+                {
+                    ruleId: 'registry-fork-detected',
+                    enforcement: 'policy',
+                    check: 'registry',
+                    message: `This fork shares ${projectType === 'plugin' ? 'plugin ID' : 'theme name'} "${key}" with upstream repository ${conflict.repo}; no registry conflict is reported.`,
+                    severity: 'recommendation',
+                    status: 'failed',
+                    coverage: 'full'
+                }
+            ]
+        };
+    }
+    const ownershipCaveat = repository
+        ? ''
+        : ' Repository ownership could not be confirmed because GITHUB_REPOSITORY is unset.';
+    return {
+        immutableIdentifierExempt: false,
+        findings: [
+            {
+                ruleId: projectType === 'plugin'
+                    ? 'registry-plugin-id-taken'
+                    : 'registry-theme-name-taken',
+                enforcement: 'policy',
+                check: 'registry',
+                message: `${projectType === 'plugin' ? 'Plugin ID' : 'Theme name'} "${key}" is already registered by ${conflict.repo}.${ownershipCaveat}`,
+                severity: 'warning',
+                status: 'failed',
+                coverage: 'full'
+            }
+        ]
+    };
+}
+
+const SAMPLE_PLUGIN_REPOSITORY = 'obsidianmd/obsidian-sample-plugin';
+function unavailableFinding(status) {
+    return {
+        ruleId: 'repository-metadata-unavailable',
+        enforcement: 'policy',
+        check: 'repository metadata',
+        message: status === 'skipped'
+            ? 'Repository metadata checks were skipped because GITHUB_TOKEN is not set.'
+            : 'Repository metadata could not be retrieved from the GitHub API.',
+        severity: 'warning',
+        status,
+        coverage: 'unavailable'
+    };
+}
+async function checkRepositoryMetadata() {
+    const token = process.env.GITHUB_TOKEN;
+    if (!token)
+        return [unavailableFinding('skipped')];
+    try {
+        const octokit = getOctokit(token);
+        const { owner, repo } = context.repo;
+        const { data } = await octokit.rest.repos.get({ owner, repo });
+        const results = [];
+        if (!data.has_issues) {
+            results.push({
+                ruleId: 'repository-issues-disabled',
+                enforcement: 'policy',
+                check: 'repository metadata',
+                message: 'GitHub Issues are disabled. Enable them so users can report problems and request features.',
+                severity: 'warning',
+                status: 'failed',
+                coverage: 'full'
+            });
+        }
+        if (data.fork && data.parent?.full_name !== SAMPLE_PLUGIN_REPOSITORY) {
+            results.push({
+                ruleId: 'repository-fork-license-review',
+                enforcement: 'policy',
+                check: 'repository metadata',
+                message: 'This repository is a fork. Review the upstream license and attribution requirements before submission.',
+                severity: 'recommendation',
+                status: 'failed',
+                coverage: 'full'
+            });
+        }
+        if (data.template_repository &&
+            data.template_repository.full_name !== SAMPLE_PLUGIN_REPOSITORY) {
+            results.push({
+                ruleId: 'repository-template-license-review',
+                enforcement: 'policy',
+                check: 'repository metadata',
+                message: 'This repository was generated from a template. Review the template license and attribution requirements before submission.',
+                severity: 'recommendation',
+                status: 'failed',
+                coverage: 'full'
+            });
+        }
+        return results;
+    }
+    catch {
+        return [unavailableFinding('inconclusive')];
+    }
+}
+
+/**
+ * Ordered by precedence. A repository containing several lockfiles resolves to
+ * the first match, so non-npm lockfiles are checked first: a stale
+ * `package-lock.json` alongside a `pnpm-lock.yaml` is far more common than the
+ * reverse.
+ */
+const PACKAGE_MANAGERS = [
+    {
+        name: 'pnpm',
+        lockfile: 'pnpm-lock.yaml',
+        install: ['pnpm', 'install'],
+        frozenInstall: ['pnpm', 'install', '--frozen-lockfile']
+    },
+    {
+        name: 'yarn',
+        lockfile: 'yarn.lock',
+        install: ['yarn', 'install'],
+        frozenInstall: ['yarn', 'install', '--immutable']
+    },
+    {
+        name: 'bun',
+        lockfile: 'bun.lockb',
+        install: ['bun', 'install'],
+        frozenInstall: ['bun', 'install', '--frozen-lockfile']
+    },
+    {
+        name: 'bun',
+        lockfile: 'bun.lock',
+        install: ['bun', 'install'],
+        frozenInstall: ['bun', 'install', '--frozen-lockfile']
+    },
+    {
+        name: 'npm',
+        lockfile: 'npm-shrinkwrap.json',
+        install: ['npm', 'install'],
+        frozenInstall: ['npm', 'ci']
+    },
+    {
+        name: 'npm',
+        lockfile: 'package-lock.json',
+        install: ['npm', 'install'],
+        frozenInstall: ['npm', 'ci']
+    }
+];
+const NPM_FALLBACK = {
+    name: 'npm',
+    lockfile: '',
+    install: ['npm', 'install'],
+    frozenInstall: ['npm', 'install']
+};
+const PNPM_DEFAULT = {
+    name: 'pnpm',
+    lockfile: '',
+    install: ['pnpm', 'install'],
+    frozenInstall: ['pnpm', 'install']
+};
+function hasPackageJson(workspacePath) {
+    return fs$1.existsSync(path$2.join(workspacePath, 'package.json'));
+}
+function detectPackageManager(workspacePath) {
+    return (PACKAGE_MANAGERS.find((pm) => fs$1.existsSync(path$2.join(workspacePath, pm.lockfile))) ?? null);
+}
+async function isAvailable(tool) {
+    return (await which(tool, false)) !== '';
+}
+async function ensureUserDeps(workspacePath) {
+    if (!hasPackageJson(workspacePath))
+        return true;
+    if (fs$1.existsSync(path$2.join(workspacePath, 'node_modules')))
+        return true;
+    info('Installing user dependencies for type resolution...');
+    const detected = detectPackageManager(workspacePath);
+    let manager = detected ?? PNPM_DEFAULT;
+    let command = detected ? manager.frozenInstall : manager.install;
+    if (!detected) {
+        warning('No lockfile found (pnpm-lock.yaml, yarn.lock, bun.lockb, bun.lock, ' +
+            'npm-shrinkwrap.json, or package-lock.json). Defaulting to "pnpm ' +
+            'install". The community directory ' +
+            'requires a committed lockfile to verify that your release can be ' +
+            'reproduced from source.');
+    }
+    if (!(await isAvailable(manager.name))) {
+        warning(`${detected ? `Found ${manager.lockfile}` : 'No lockfile was found'} but ` +
+            `"${manager.name}" is not available on ` +
+            `this runner. Falling back to "npm install", which ignores that ` +
+            `${detected ? 'lockfile' : 'preferred default'} and may resolve different dependency versions. Add the ` +
+            `matching setup step (for example pnpm/action-setup) before this action.`);
+        manager = NPM_FALLBACK;
+        command = NPM_FALLBACK.install;
+    }
+    else if (detected) {
+        info(`Detected ${manager.lockfile}; using "${command.join(' ')}".`);
+    }
+    const [tool, ...args] = command;
+    const exitCode = await exec(tool, args, {
+        cwd: workspacePath,
+        ignoreReturnCode: true
+    });
+    return exitCode === 0;
+}
+
+function isUnpinned(specifier) {
+    const normalized = specifier.trim().toLowerCase();
+    return (normalized === '' ||
+        normalized === '*' ||
+        normalized === 'x' ||
+        normalized === 'latest' ||
+        /^>=?\s*\S+$/.test(normalized));
+}
+function checkDependencies(workspacePath) {
+    if (detectPackageManager(workspacePath))
+        return [];
+    let packageJson;
+    try {
+        packageJson = JSON.parse(fs$1.readFileSync(path$2.join(workspacePath, 'package.json'), 'utf8'));
+    }
+    catch {
+        return [];
+    }
+    if (typeof packageJson !== 'object' || packageJson === null)
+        return [];
+    const dependencies = packageJson.dependencies;
+    if (typeof dependencies !== 'object' || dependencies === null)
+        return [];
+    const results = [];
+    for (const [name, value] of Object.entries(dependencies)) {
+        if (typeof value !== 'string')
+            continue;
+        if (isUnpinned(value)) {
+            results.push({
+                ruleId: 'dependency-unpinned-version',
+                enforcement: 'policy',
+                check: 'dependencies',
+                message: `Dependency "${name}" uses unpinned version specifier "${value}" without a lockfile.`,
+                severity: 'warning',
+                status: 'failed',
+                coverage: 'full',
+                location: { file: 'package.json' }
+            });
+        }
+        else if (/^[~^]/.test(value.trim())) {
+            results.push({
+                ruleId: 'dependency-broad-range',
+                enforcement: 'policy',
+                check: 'dependencies',
+                message: `Dependency "${name}" uses broad version range "${value}" without a lockfile.`,
+                severity: 'recommendation',
+                status: 'failed',
+                coverage: 'full',
+                location: { file: 'package.json' }
+            });
+        }
+    }
+    return results;
+}
+
+const BUILD_SCRIPTS_PRIORITY = ['build', 'build:plugin', 'compile'];
+function detectBuildScript(workspacePath) {
+    const pkgPath = path$2.join(workspacePath, 'package.json');
+    if (!fs$1.existsSync(pkgPath))
+        return null;
+    try {
+        const raw = fs$1.readFileSync(pkgPath, 'utf-8');
+        const pkg = JSON.parse(raw);
+        const scripts = pkg.scripts;
+        if (!scripts)
+            return null;
+        for (const scriptName of BUILD_SCRIPTS_PRIORITY) {
+            if (scripts[scriptName])
+                return scriptName;
+        }
+    }
+    catch {
+        /* invalid package.json — no build script to detect */
+    }
+    return null;
+}
+async function runBuild(workspacePath, projectType, explicitBuildCommand) {
+    const results = [];
+    if (explicitBuildCommand === 'false') {
+        info('Build step disabled via input.');
+        return results;
+    }
+    let buildCommand = null;
+    if (explicitBuildCommand) {
+        buildCommand = explicitBuildCommand;
+    }
+    else if (projectType === 'plugin' && hasPackageJson(workspacePath)) {
+        const detected = detectBuildScript(workspacePath);
+        if (detected) {
+            buildCommand = `npm run ${detected}`;
+            info(`Auto-detected build script: "${detected}"`);
+        }
+    }
+    if (!buildCommand) {
+        if (projectType === 'plugin' && hasPackageJson(workspacePath)) {
+            info('No build script found (checked: build, build:plugin, compile). Skipping build.');
+        }
+        return results;
+    }
+    const installed = await ensureUserDeps(workspacePath);
+    if (!installed) {
+        results.push({
+            ruleId: 'build-dependency-install-failed',
+            enforcement: 'correctness',
+            message: 'Dependency installation failed.',
+            severity: 'error',
+            status: 'failed',
+            coverage: 'partial',
+            check: 'build'
+        });
+        return results;
+    }
+    info(`Running build: ${buildCommand}`);
+    const [cmd, ...args] = buildCommand.split(' ');
+    const exitCode = await exec(cmd, args, {
+        cwd: workspacePath,
+        ignoreReturnCode: true
+    });
+    if (exitCode !== 0) {
+        results.push({
+            ruleId: 'build-command-failed',
+            enforcement: 'correctness',
+            message: `Build failed (exit code ${exitCode}). Command: "${buildCommand}".`,
+            severity: 'error',
+            status: 'failed',
+            coverage: 'partial',
+            check: 'build'
+        });
+    }
+    return results;
+}
+
+const BUNDLE_LOCATIONS = [
+    'main.js',
+    'dist/main.js',
+    'build/main.js',
+    'out/main.js'
+];
+const DOMAIN_LIMIT = 20;
+const HELP_MESSAGE = 'This is an advisory preflight check; the authoritative scan runs at release against the published bundle. main.js bundles dependencies, so this finding may originate from a third-party package rather than the author’s own source.';
+function finding(ruleId, message, severity, status, bundlePath) {
+    return {
+        ruleId,
+        enforcement: 'policy',
+        check: 'artifact-preflight',
+        message,
+        severity,
+        status,
+        coverage: 'partial',
+        helpMessage: HELP_MESSAGE,
+        ...(bundlePath ? { location: { file: bundlePath } } : {})
+    };
+}
+function findBundle(workspacePath) {
+    for (const relativePath of BUNDLE_LOCATIONS) {
+        if (fs$1.existsSync(path$2.join(workspacePath, relativePath)))
+            return relativePath;
+    }
+    return null;
+}
+function externalDomains(bundle) {
+    const domains = new Set();
+    const callPattern = /\b(?:fetch|requestUrl|request|XMLHttpRequest|ajax)\s*\([^)]{0,1000}/g;
+    const urlPattern = /https?:\/\/[^\s"'`\\)\]}>,;]+/g;
+    for (const call of bundle.matchAll(callPattern)) {
+        for (const urlMatch of call[0].matchAll(urlPattern)) {
+            try {
+                domains.add(new URL(urlMatch[0]).hostname);
+            }
+            catch {
+                continue;
+            }
+        }
+    }
+    return [...domains].slice(0, DOMAIN_LIMIT);
+}
+function checkArtifactBundle(workspacePath, projectType) {
+    if (projectType !== 'plugin') {
+        return [
+            finding('bundle-artifact-preflight', 'Artifact preflight applies only to plugins.', 'recommendation', 'skipped')
+        ];
+    }
+    const bundlePath = findBundle(workspacePath);
+    if (!bundlePath) {
+        return [
+            finding('bundle-artifact-preflight', 'Built main.js was not found; artifact preflight was skipped.', 'recommendation', 'skipped')
+        ];
+    }
+    const bundle = fs$1.readFileSync(path$2.join(workspacePath, bundlePath), 'utf8');
+    const results = [];
+    if (/\b(?:__awaiter|__generator|__spreadArray)\b/.test(bundle)) {
+        results.push(finding('bundle-es5-helpers', 'The bundle contains ES5 compatibility helpers.', 'recommendation', 'failed', bundlePath));
+    }
+    if (/AGFz[A-Za-z0-9+/=]{8,}/.test(bundle)) {
+        results.push(finding('bundle-inline-wasm', 'The bundle contains inline base64 data with a WebAssembly magic header.', 'warning', 'failed', bundlePath));
+    }
+    const wasmReferences = [
+        ...new Set(bundle.match(/[^\s"'`\\)\]}>,;]+\.wasm\b/gi) ?? [])
+    ].slice(0, DOMAIN_LIMIT);
+    if (wasmReferences.length > 0) {
+        results.push(finding('bundle-wasm-reference', `The bundle references WebAssembly file(s): ${wasmReferences.join(', ')}.`, 'recommendation', 'failed', bundlePath));
+    }
+    const domains = externalDomains(bundle);
+    if (domains.length > 0) {
+        results.push(finding('bundle-external-domain', `The bundle passes URL(s) for these domain(s) to network APIs: ${domains.join(', ')}.`, 'recommendation', 'failed', bundlePath));
+    }
+    if (/navigator\s*\.\s*sendBeacon\s*\(/.test(bundle)) {
+        results.push(finding('bundle-send-beacon', 'The bundle calls navigator.sendBeacon().', 'warning', 'failed', bundlePath));
+    }
+    if (/rejectUnauthorized\s*:\s*false\b/.test(bundle)) {
+        results.push(finding('bundle-tls-verification-disabled', 'The bundle contains rejectUnauthorized: false, which disables TLS certificate verification.', 'error', 'failed', bundlePath));
+    }
+    return results;
+}
+
+const SCANNER_STYLELINT_CONFIG = {
+    plugins: ['stylelint-no-unsupported-browser-features'],
+    ignoreDisables: true,
+    ignoreFiles: [
+        'node_modules',
+        'dist',
+        'build',
+        'pkg',
+        'test-vault',
+        '.obsidian',
+        '**/.obsidian/**',
+        'esbuild.config.mjs',
+        'version-bump.mjs',
+        '**/*.test.*',
+        '**/*.tests.*',
+        '**/*.spec.*',
+        '**/*.specs.*',
+        '**/test/**',
+        '**/tests/**',
+        '**/__tests__/**',
+        '**/mocks/**',
+        '**/__mocks__/**',
+        '**/*.cjs',
+        '**/*.mjs',
+        '**/*.cts',
+        '**/*.mts',
+        '**/vite*',
+        '**/scripts/**',
+        '**/docs/**',
+        '**/i18n/**',
+        '**/i18next/**',
+        '**/locale/**',
+        '**/locales/**',
+        '**/translations/**',
+        '**/l10n/**',
+        '.pnpm-store',
+        '**/*.spec.ts',
+        '**/testUtils**',
+        'automation/**',
+        'e2e-tests/**'
+    ],
+    rules: {
+        'function-url-scheme-disallowed-list': [
+            ['http', 'https', 'file'],
+            {
+                severity: 'error',
+                message: 'External URLs are not allowed in themes. To embed images & fonts encode them as base64 <https://docs.obsidian.md/Themes/App+themes/Embed+fonts+and+images+in+your+theme>'
+            }
+        ],
+        'function-url-scheme-allowed-list': ['data'],
+        'declaration-no-important': [
+            true,
+            {
+                severity: 'warning',
+                message: 'Avoid !important — override styles by increasing selector specificity or using CSS variables instead.'
+            }
+        ],
+        'color-named': [
+            'never',
+            {
+                severity: 'warning',
+                message: 'Use hex colors or Obsidian CSS variables instead of named colors to ensure proper light/dark theme support. <https://docs.obsidian.md/Reference/CSS+variables/CSS+variables>'
+            }
+        ],
+        'custom-property-no-missing-var-function': null,
+        'no-duplicate-selectors': null,
+        'no-duplicate-at-import-rules': null,
+        'declaration-block-no-duplicate-properties': [
+            true,
+            { severity: 'warning' }
+        ],
+        'shorthand-property-no-redundant-values': null,
+        'plugin/no-unsupported-browser-features': [
+            true,
+            {
+                severity: 'warning',
+                browsers: ['electron >= 39'],
+                ignore: ['css-nesting', 'css-cascade-layers']
+            }
+        ],
+        'selector-pseudo-class-disallowed-list': [
+            ['has'],
+            {
+                severity: 'warning',
+                message: 'Avoid :has() — it can cause significant performance issues due to broad selector invalidation.'
+            }
+        ],
+        'selector-pseudo-class-no-unknown': [
+            true,
+            {
+                ignorePseudoClasses: ['global', 'local'],
+                severity: 'warning'
+            }
+        ],
+        'selector-pseudo-element-no-unknown': [true, { severity: 'warning' }],
+        'selector-type-no-unknown': [
+            true,
+            { ignoreTypes: [], severity: 'warning' }
+        ],
+        'at-rule-no-unknown': [
+            true,
+            {
+                ignoreAtRules: ['layer', 'property', 'container'],
+                severity: 'warning'
+            }
+        ],
+        'unit-no-unknown': [true, { severity: 'warning' }],
+        'property-disallowed-list': [['all'], { severity: 'warning' }]
+    }
+};
+// Source: community-workers/src/worker/electronVersions.json
+const ELECTRON_VERSIONS = {
+    25: '1.4.5',
+    28: '1.5.8',
+    30: '1.6.5',
+    31: '1.7.4',
+    37: '1.9.12',
+    39: '1.11.4'
+};
+const DEFAULT_ELECTRON = 39;
+function semverToNum(v) {
+    const [major = 0, minor = 0, patch = 0] = v.split('.').map(Number);
+    return major * 100_000 + minor * 1_000 + patch;
+}
+function getMinElectronVersion(minAppVersion) {
+    if (!minAppVersion)
+        return DEFAULT_ELECTRON;
+    const target = semverToNum(minAppVersion);
+    let result = Math.min(...Object.keys(ELECTRON_VERSIONS).map(Number));
+    for (const [electronStr, obsidianVersion] of Object.entries(ELECTRON_VERSIONS)) {
+        const electron = Number(electronStr);
+        if (semverToNum(obsidianVersion) <= target) {
+            result = Math.max(result, electron);
+        }
+    }
+    return result;
+}
+function buildStylelintConfig(minAppVersion) {
+    const minElectron = getMinElectronVersion(minAppVersion);
+    const config = JSON.parse(JSON.stringify(SCANNER_STYLELINT_CONFIG));
+    config.rules['plugin/no-unsupported-browser-features'][1].browsers = [
+        `electron >= ${minElectron}`
+    ];
+    return config;
+}
+const SCANNER_STYLELINT_DEPS = {
+    stylelint: '17.6.0',
+    'stylelint-no-unsupported-browser-features': '8.1.1'
+};
+const SCANNER_ESLINT_DEPS = {
+    eslint: '9.37.0',
+    'eslint-plugin-obsidianmd': '0.4.1',
+    'typescript-eslint': '8.61.1'
+};
+function relativeFile(workspacePath, filePath) {
+    return path$2.normalize(path$2.isAbsolute(filePath)
+        ? path$2.relative(workspacePath, filePath)
+        : filePath);
+}
+function isRecord(value) {
+    return typeof value === 'object' && value !== null;
+}
+function optionalNumber(value) {
+    return typeof value === 'number' ? value : undefined;
+}
+function parseStylelintOutput(stdout, workspacePath) {
+    const parsed = JSON.parse(stdout);
+    if (!Array.isArray(parsed))
+        throw new Error('Stylelint output is not an array.');
+    const findings = [];
+    for (const result of parsed) {
+        if (!isRecord(result))
+            continue;
+        const source = typeof result.source === 'string' ? result.source : '';
+        const warnings = Array.isArray(result.warnings) ? result.warnings : [];
+        for (const warning of warnings) {
+            if (!isRecord(warning))
+                continue;
+            const severity = warning.severity === 'error' ? 'error' : 'warning';
+            findings.push({
+                ruleId: typeof warning.rule === 'string'
+                    ? warning.rule
+                    : 'stylelint-unknown-rule',
+                enforcement: 'policy',
+                check: 'scanner-stylelint',
+                message: typeof warning.text === 'string'
+                    ? warning.text
+                    : 'Stylelint reported an issue.',
+                severity,
+                status: 'failed',
+                coverage: 'full',
+                location: {
+                    file: relativeFile(workspacePath, source),
+                    startLine: optionalNumber(warning.line),
+                    endLine: optionalNumber(warning.endLine),
+                    startColumn: optionalNumber(warning.column),
+                    endColumn: optionalNumber(warning.endColumn)
+                }
+            });
+        }
+        const parseErrors = Array.isArray(result.parseErrors)
+            ? result.parseErrors
+            : [];
+        for (const parseError of parseErrors) {
+            const detail = isRecord(parseError) ? parseError : {};
+            findings.push({
+                ruleId: 'css-parse-error',
+                enforcement: 'policy',
+                check: 'scanner-stylelint',
+                message: typeof detail.text === 'string'
+                    ? detail.text
+                    : typeof parseError === 'string'
+                        ? parseError
+                        : 'Stylelint could not parse this stylesheet.',
+                severity: 'error',
+                status: 'failed',
+                coverage: 'full',
+                location: {
+                    file: relativeFile(workspacePath, source),
+                    startLine: optionalNumber(detail.line),
+                    startColumn: optionalNumber(detail.column)
+                }
+            });
+        }
+    }
+    return findings;
+}
+function resolveEslintHelpUrl(ruleId, plugin) {
+    if (!ruleId?.startsWith('obsidianmd/'))
+        return undefined;
+    const name = ruleId.slice('obsidianmd/'.length);
+    const url = plugin?.rules?.[name]?.meta?.docs?.url;
+    return typeof url === 'string' && url.length > 0 ? url : undefined;
+}
+function parseEslintOutput(stdout, workspacePath, plugin) {
+    const parsed = JSON.parse(stdout);
+    if (!Array.isArray(parsed))
+        throw new Error('ESLint output is not an array.');
+    const findings = [];
+    for (const result of parsed) {
+        if (!isRecord(result))
+            continue;
+        const filePath = typeof result.filePath === 'string' ? result.filePath : '';
+        const messages = Array.isArray(result.messages) ? result.messages : [];
+        for (const entry of messages) {
+            if (!isRecord(entry))
+                continue;
+            const ruleId = typeof entry.ruleId === 'string' ? entry.ruleId : null;
+            const fatal = entry.fatal === true || ruleId === null;
+            findings.push({
+                ruleId: fatal ? 'eslint-execution-failure' : ruleId,
+                enforcement: 'policy',
+                check: 'scanner-eslint',
+                message: typeof entry.message === 'string'
+                    ? entry.message
+                    : 'ESLint reported an issue.',
+                severity: fatal
+                    ? 'recommendation'
+                    : entry.severity === 2
+                        ? 'error'
+                        : 'warning',
+                status: fatal ? 'inconclusive' : 'failed',
+                coverage: fatal ? 'unavailable' : 'full',
+                location: {
+                    file: relativeFile(workspacePath, filePath),
+                    startLine: optionalNumber(entry.line),
+                    endLine: optionalNumber(entry.endLine),
+                    startColumn: optionalNumber(entry.column),
+                    endColumn: optionalNumber(entry.endColumn)
+                },
+                helpUrl: resolveEslintHelpUrl(ruleId, plugin)
+            });
+        }
+    }
+    return findings;
+}
+function findCssFiles(directory, workspacePath = directory) {
+    const ignored = new Set([
+        'node_modules',
+        'dist',
+        'build',
+        '.git',
+        '.obsidian'
+    ]);
+    const files = [];
+    for (const entry of fs$1.readdirSync(directory, { withFileTypes: true })) {
+        if (entry.isDirectory()) {
+            if (!ignored.has(entry.name)) {
+                files.push(...findCssFiles(path$2.join(directory, entry.name), workspacePath));
+            }
+        }
+        else if (entry.isFile() && entry.name.endsWith('.css')) {
+            files.push(path$2.relative(workspacePath, path$2.join(directory, entry.name)));
+        }
+    }
+    return files;
+}
+async function createScannerDepsDir(deps) {
+    const tempDir = fs$1.mkdtempSync(path$2.join(os$1.tmpdir(), 'obsidian-scanner-lint-'));
+    const pkg = {
+        name: 'obsidian-scanner-lint',
+        private: true,
+        dependencies: deps
+    };
+    fs$1.writeFileSync(path$2.join(tempDir, 'package.json'), JSON.stringify(pkg));
+    const exitCode = await exec('npm', ['install'], {
+        cwd: tempDir,
+        ignoreReturnCode: true
+    });
+    if (exitCode !== 0) {
+        fs$1.rmSync(tempDir, { recursive: true, force: true });
+        throw new Error('Failed to install scanner lint dependencies.');
+    }
+    return tempDir;
+}
+async function runUserLint(workspacePath) {
+    const results = [];
+    const pkgPath = path$2.join(workspacePath, 'package.json');
+    if (!fs$1.existsSync(pkgPath)) {
+        info('No package.json found. Skipping user lint.');
+        return results;
+    }
+    try {
+        const raw = fs$1.readFileSync(pkgPath, 'utf-8');
+        const pkg = JSON.parse(raw);
+        const scripts = pkg.scripts;
+        if (!scripts?.lint) {
+            info('No "lint" script in package.json. Skipping user lint.');
+            return results;
+        }
+    }
+    catch {
+        return results;
+    }
+    info('Running user lint script...');
+    const exitCode = await exec('npm', ['run', 'lint'], {
+        cwd: workspacePath,
+        ignoreReturnCode: true
+    });
+    if (exitCode !== 0) {
+        results.push({
+            ruleId: 'user-lint-failed',
+            enforcement: 'policy',
+            message: `User lint script failed (exit code ${exitCode}).`,
+            severity: 'warning',
+            status: 'failed',
+            coverage: 'partial',
+            check: 'lint'
+        });
+    }
+    return results;
+}
+async function runScannerStylelint(workspacePath, projectType, minAppVersion) {
+    const cssFiles = projectType === 'theme'
+        ? fs$1.existsSync(path$2.join(workspacePath, 'theme.css'))
+            ? ['theme.css']
+            : []
+        : findCssFiles(workspacePath);
+    if (cssFiles.length === 0) {
+        info('No CSS files found to lint.');
+        return [
+            {
+                ruleId: 'scanner-stylelint-no-files',
+                enforcement: 'policy',
+                check: 'scanner-stylelint',
+                message: 'Scanner Stylelint skipped because no CSS files were found.',
+                severity: 'recommendation',
+                status: 'skipped',
+                coverage: 'unavailable'
+            }
+        ];
+    }
+    info('Installing scanner stylelint dependencies...');
+    let scannerDir;
+    try {
+        scannerDir = await createScannerDepsDir(SCANNER_STYLELINT_DEPS);
+    }
+    catch {
+        return [
+            {
+                ruleId: 'scanner-stylelint-setup-failed',
+                enforcement: 'policy',
+                message: 'Failed to install scanner stylelint dependencies.',
+                severity: 'recommendation',
+                status: 'inconclusive',
+                coverage: 'unavailable',
+                check: 'scanner-stylelint'
+            }
+        ];
+    }
+    const configPath = path$2.join(workspacePath, '.stylelintrc.scanner.json');
+    const config = buildStylelintConfig(minAppVersion);
+    fs$1.writeFileSync(configPath, JSON.stringify(config));
+    try {
+        info('Running scanner stylelint...');
+        const output = await getExecOutput('npx', [
+            '--prefix',
+            scannerDir,
+            'stylelint',
+            ...cssFiles,
+            '--config',
+            configPath,
+            '--config-basedir',
+            path$2.join(scannerDir, 'node_modules'),
+            '--formatter',
+            'json'
+        ], {
+            cwd: workspacePath,
+            ignoreReturnCode: true,
+            env: {
+                ...process.env,
+                NODE_PATH: path$2.join(scannerDir, 'node_modules')
+            }
+        });
+        try {
+            const stylelintJson = output.stderr.match(/^\s*(\[.*\])\s*$/m)?.[1] ?? output.stdout;
+            const findings = parseStylelintOutput(stylelintJson, workspacePath);
+            if (findings.length > 0)
+                return findings;
+            if (output.exitCode === 0) {
+                return [
+                    {
+                        ruleId: 'scanner-stylelint-passed',
+                        enforcement: 'policy',
+                        check: 'scanner-stylelint',
+                        message: 'Scanner Stylelint found no issues.',
+                        severity: 'recommendation',
+                        status: 'passed',
+                        coverage: 'full'
+                    }
+                ];
+            }
+        }
+        catch {
+            // Report execution uncertainty rather than assigning malformed tool output to the author.
+        }
+        return [
+            {
+                ruleId: 'scanner-stylelint-execution-failed',
+                enforcement: 'policy',
+                check: 'scanner-stylelint',
+                message: `Scanner Stylelint did not produce usable JSON (exit code ${output.exitCode}).`,
+                severity: 'recommendation',
+                status: 'inconclusive',
+                coverage: 'unavailable'
+            }
+        ];
+    }
+    catch (error) {
+        return [
+            {
+                ruleId: 'scanner-stylelint-execution-failed',
+                enforcement: 'policy',
+                check: 'scanner-stylelint',
+                message: `Scanner Stylelint could not run: ${error instanceof Error ? error.message : String(error)}.`,
+                severity: 'recommendation',
+                status: 'inconclusive',
+                coverage: 'unavailable'
+            }
+        ];
+    }
+    finally {
+        fs$1.rmSync(scannerDir, { recursive: true, force: true });
+        if (fs$1.existsSync(configPath))
+            fs$1.unlinkSync(configPath);
+    }
+}
+function buildScannerEslintConfig(hasTsconfig) {
+    if (!hasTsconfig) {
+        return `import obsidianmd from "eslint-plugin-obsidianmd";
+import { globalIgnores } from "eslint/config";
+
+const IGNORES = ${JSON.stringify(SCANNER_STYLELINT_CONFIG.ignoreFiles)};
+
+export default [
+  globalIgnores(IGNORES),
+  { ignores: ["eslint.config.scanner.mjs", "main.js", "styles.css", "manifest.json"] },
+  ...obsidianmd.configs.recommended.map(config => {
+    if (config.rules) {
+      const filtered = { ...config.rules };
+      delete filtered["obsidianmd/no-plugin-as-component"];
+      delete filtered["obsidianmd/no-view-references-in-plugin"];
+      delete filtered["obsidianmd/no-unsupported-api"];
+      delete filtered["obsidianmd/prefer-create-el"];
+      delete filtered["obsidianmd/prefer-file-manager-trash-file"];
+      delete filtered["obsidianmd/prefer-instanceof"];
+      return { ...config, rules: filtered };
+    }
+    return config;
+  })
+];
+`;
+    }
+    return `import { cwd } from "node:process";
+import { globalIgnores } from "eslint/config";
+import obsidianmd from "eslint-plugin-obsidianmd";
+import tseslint from "typescript-eslint";
+
+const IGNORES = ${JSON.stringify(SCANNER_STYLELINT_CONFIG.ignoreFiles)};
+
+function toWarns(config) {
+  if (!config) return config;
+  if (!Array.isArray(config) && typeof config[Symbol.iterator] === "function") {
+    return [...config].map(toWarns);
+  }
+  if (Array.isArray(config)) return config.map(toWarns);
+  const result = { ...config };
+  if (result.extends) result.extends = toWarns(result.extends);
+  if (result.rules) {
+    result.rules = Object.fromEntries(
+      Object.entries(result.rules).map(([key, value]) => {
+        if (key.startsWith("eslint-comments/")) return [key, value];
+        if (value === "error" || value === 2) return [key, "warn"];
+        if (Array.isArray(value) && (value[0] === "error" || value[0] === 2)) return [key, ["warn", ...value.slice(1)]];
+        return [key, value];
+      })
+    );
+  }
+  return result;
+}
+
+export default [
+  {
+    languageOptions: {
+      parserOptions: {
+        projectService: {
+          allowDefaultProject: [
+            "eslint.config.js",
+            "eslint.config.mjs",
+            "eslint.config.mts",
+          ]
+        },
+        tsconfigRootDir: cwd(),
+        extraFileExtensions: [".json"]
+      },
+    },
+  },
+  ...toWarns(obsidianmd.configs.recommended),
+  {
+    linterOptions: {
+      noInlineConfig: false,
+      reportUnusedDisableDirectives: "off",
+      reportUnusedInlineConfigs: "off",
+    },
+  },
+  {
+    files: ["**/*.{ts,cts,mts,tsx,js,cjs,mjs,jsx}"],
+    rules: {
+      "no-eval": "error",
+      "no-implied-eval": "error",
+      "no-unsanitized/method": "error",
+      "no-unsanitized/property": "error",
+      "obsidianmd/regex-lookbehind": "error",
+      "obsidianmd/no-forbidden-elements": "error",
+
+      "no-undef": "off",
+      "@typescript-eslint/no-unsafe-member-access": "off",
+      "@typescript-eslint/no-unsafe-assignment": "off",
+      "@typescript-eslint/no-unsafe-argument": "off",
+      "@typescript-eslint/no-unsafe-call": "off",
+      "@typescript-eslint/no-unsafe-return": "off",
+      "@typescript-eslint/restrict-template-expressions": "off",
+      "@typescript-eslint/no-base-to-string": "off",
+      "import/no-unresolved": "off",
+
+      "obsidianmd/validate-manifest": "off",
+      "obsidianmd/validate-license": "off",
+
+      "obsidianmd/commands/no-command-in-command-id": "off",
+      "obsidianmd/commands/no-plugin-id-in-command-id": "off",
+    }
+  },
+  {
+    files: ["**/*.ts", "**/*.tsx", "**/*.js", "**/*.jsx"],
+    rules: {
+      "obsidianmd/ui/sentence-case": "off",
+      "obsidianmd/ui/sentence-case-json": "off",
+      "obsidianmd/ui/sentence-case-locale-module": "off",
+    }
+  },
+  {
+    files: ["**/*.ts", "**/*.tsx", "**/*.js", "**/*.jsx"],
+    rules: {
+      "eslint-comments/require-description": "error",
+    }
+  },
+  {
+    files: ["**/*.ts", "**/*.tsx", "**/*.js", "**/*.jsx"],
+    plugins: {
+      "@typescript-eslint": tseslint.plugin,
+      "obsidianmd": obsidianmd,
+    },
+    rules: {
+      "@typescript-eslint/no-unsafe-member-access": "warn",
+      "@typescript-eslint/no-unsafe-assignment": "warn",
+      "@typescript-eslint/no-unsafe-argument": "warn",
+      "@typescript-eslint/no-unsafe-call": "warn",
+      "@typescript-eslint/no-unsafe-return": "warn",
+
+      "obsidianmd/commands/no-command-in-command-id": "warn",
+      "obsidianmd/commands/no-plugin-id-in-command-id": "warn",
+
+      "obsidianmd/settings-tab/no-manual-html-headings": "error",
+      "obsidianmd/settings-tab/no-problematic-settings-headings": "error",
+      "obsidianmd/sample-names": "error",
+      "obsidianmd/no-sample-code": "error",
+      "obsidianmd/platform": "error",
+      "obsidianmd/no-plugin-as-component": "error",
+      "obsidianmd/detach-leaves": "error",
+      "obsidianmd/no-static-styles-assignment": "error",
+      "obsidianmd/no-view-references-in-plugin": "error",
+      "obsidianmd/no-unsupported-api": "error",
+    }
+  },
+  globalIgnores(IGNORES),
+  { ignores: ["eslint.config.scanner.mjs", "main.js", "styles.css", "manifest.json"] },
+];
+`;
+}
+async function runScannerEslint(workspacePath) {
+    const hasTsconfig = fs$1.existsSync(path$2.join(workspacePath, 'tsconfig.json'));
+    await ensureUserDeps(workspacePath);
+    info('Installing scanner ESLint dependencies...');
+    let scannerDir;
+    try {
+        scannerDir = await createScannerDepsDir(SCANNER_ESLINT_DEPS);
+    }
+    catch {
+        return [
+            {
+                ruleId: 'scanner-eslint-setup-failed',
+                enforcement: 'policy',
+                message: 'Failed to install scanner ESLint dependencies.',
+                severity: 'recommendation',
+                status: 'inconclusive',
+                coverage: 'unavailable',
+                check: 'scanner-eslint'
+            }
+        ];
+    }
+    const configContent = buildScannerEslintConfig(hasTsconfig);
+    const configPath = path$2.join(scannerDir, 'eslint.config.scanner.mjs');
+    fs$1.writeFileSync(configPath, configContent);
+    try {
+        info(hasTsconfig
+            ? 'Running scanner ESLint with type-aware rules...'
+            : 'Running scanner ESLint without type-aware rules (no tsconfig.json)...');
+        const nodePath = [
+            path$2.join(scannerDir, 'node_modules'),
+            path$2.join(workspacePath, 'node_modules')
+        ].join(path$2.delimiter);
+        const output = await getExecOutput('npx', [
+            '--prefix',
+            scannerDir,
+            'eslint',
+            '--config',
+            configPath,
+            '--format',
+            'json',
+            '--no-error-on-unmatched-pattern',
+            '.'
+        ], {
+            cwd: workspacePath,
+            ignoreReturnCode: true,
+            env: {
+                ...process.env,
+                NODE_PATH: nodePath
+            }
+        });
+        let plugin;
+        try {
+            const modulePath = path$2.join(scannerDir, 'node_modules', 'eslint-plugin-obsidianmd', 'dist', 'index.js');
+            const loaded = await import(pathToFileURL(modulePath).href);
+            if (isRecord(loaded)) {
+                const candidate = isRecord(loaded.default) ? loaded.default : loaded;
+                plugin = candidate;
+            }
+        }
+        catch {
+            plugin = undefined;
+        }
+        try {
+            const findings = parseEslintOutput(output.stdout, workspacePath, plugin);
+            if (findings.length > 0)
+                return findings;
+            if (output.exitCode === 0) {
+                return [
+                    {
+                        ruleId: 'scanner-eslint-passed',
+                        enforcement: 'policy',
+                        check: 'scanner-eslint',
+                        message: 'Scanner ESLint found no issues.',
+                        severity: 'recommendation',
+                        status: 'passed',
+                        coverage: 'full'
+                    }
+                ];
+            }
+        }
+        catch {
+            // Report execution uncertainty rather than assigning malformed tool output to the author.
+        }
+        return [
+            {
+                ruleId: 'scanner-eslint-execution-failed',
+                enforcement: 'policy',
+                check: 'scanner-eslint',
+                message: `Scanner ESLint did not produce usable JSON (exit code ${output.exitCode}).`,
+                severity: 'recommendation',
+                status: 'inconclusive',
+                coverage: 'unavailable'
+            }
+        ];
+    }
+    catch (error) {
+        return [
+            {
+                ruleId: 'scanner-eslint-execution-failed',
+                enforcement: 'policy',
+                check: 'scanner-eslint',
+                message: `Scanner ESLint could not run: ${error instanceof Error ? error.message : String(error)}.`,
+                severity: 'recommendation',
+                status: 'inconclusive',
+                coverage: 'unavailable'
+            }
+        ];
+    }
+    finally {
+        fs$1.rmSync(scannerDir, { recursive: true, force: true });
+    }
+}
+async function runLint(workspacePath, projectType, useScannerLint, mode) {
+    const results = [];
+    const effectiveScannerLint = mode === 'release' || useScannerLint;
+    if (!effectiveScannerLint) {
+        results.push(...(await runUserLint(workspacePath)));
+        return results;
+    }
+    const manifest = readManifest(workspacePath);
+    const minAppVersion = manifest && typeof manifest === 'object'
+        ? manifest.minAppVersion
+        : undefined;
+    results.push(...(await runScannerStylelint(workspacePath, projectType, minAppVersion)));
+    if (projectType === 'plugin') {
+        results.push(...(await runScannerEslint(workspacePath)));
+    }
+    return results;
 }
 
 var light$1 = {exports: {}};
@@ -112675,18 +114243,18 @@ var ca = {};
 
 var fulcio = {};
 
-var fetch = {};
+var fetch$1 = {};
 
 var hasRequiredFetch;
 
 function requireFetch () {
-	if (hasRequiredFetch) return fetch;
+	if (hasRequiredFetch) return fetch$1;
 	hasRequiredFetch = 1;
-	var __importDefault = (fetch && fetch.__importDefault) || function (mod) {
+	var __importDefault = (fetch$1 && fetch$1.__importDefault) || function (mod) {
 	    return (mod && mod.__esModule) ? mod : { "default": mod };
 	};
-	Object.defineProperty(fetch, "__esModule", { value: true });
-	fetch.fetchWithRetry = fetchWithRetry;
+	Object.defineProperty(fetch$1, "__esModule", { value: true });
+	fetch$1.fetchWithRetry = fetchWithRetry;
 	/*
 	Copyright 2023 The Sigstore Authors.
 
@@ -112779,7 +114347,7 @@ function requireFetch () {
 	        return { retries: 0, ...retry };
 	    }
 	};
-	return fetch;
+	return fetch$1;
 }
 
 var hasRequiredFulcio$1;
@@ -114478,8 +116046,8 @@ function keyForCrypto(alg, key) {
             }
             checkKeyLength(key, alg);
             options = {
-                padding: constants$f.RSA_PKCS1_PSS_PADDING,
-                saltLength: constants$f.RSA_PSS_SALTLEN_DIGEST,
+                padding: constants$g.RSA_PKCS1_PSS_PADDING,
+                saltLength: constants$g.RSA_PSS_SALTLEN_DIGEST,
             };
             break;
         case 'ES256':
@@ -115184,15 +116752,23 @@ function validateReleaseAssets(workspacePath, projectType) {
     if (projectType === 'plugin') {
         if (!fs$1.existsSync(path$2.join(workspacePath, 'main.js'))) {
             results.push({
+                ruleId: 'release-asset-main-js-missing',
+                enforcement: 'correctness',
                 message: 'Release asset main.js not found. Did the build step complete successfully?',
                 severity: 'error',
+                status: 'failed',
+                coverage: 'partial',
                 check: 'release'
             });
         }
         if (!fs$1.existsSync(path$2.join(workspacePath, 'manifest.json'))) {
             results.push({
+                ruleId: 'release-asset-manifest-missing',
+                enforcement: 'correctness',
                 message: 'Release asset manifest.json not found.',
                 severity: 'error',
+                status: 'failed',
+                coverage: 'partial',
                 check: 'release'
             });
         }
@@ -115200,15 +116776,23 @@ function validateReleaseAssets(workspacePath, projectType) {
     if (projectType === 'theme') {
         if (!fs$1.existsSync(path$2.join(workspacePath, 'theme.css'))) {
             results.push({
+                ruleId: 'release-asset-theme-css-missing',
+                enforcement: 'correctness',
                 message: 'Release asset theme.css not found.',
                 severity: 'error',
+                status: 'failed',
+                coverage: 'partial',
                 check: 'release'
             });
         }
         if (!fs$1.existsSync(path$2.join(workspacePath, 'manifest.json'))) {
             results.push({
+                ruleId: 'release-asset-manifest-missing',
+                enforcement: 'correctness',
                 message: 'Release asset manifest.json not found.',
                 severity: 'error',
+                status: 'failed',
+                coverage: 'partial',
                 check: 'release'
             });
         }
@@ -115227,8 +116811,12 @@ function validateManifestConsistency(workspacePath) {
     const manifestVersion = obj.version;
     if (manifestVersion && manifestVersion !== tag) {
         results.push({
+            ruleId: 'release-manifest-version-mismatch',
+            enforcement: 'policy',
             message: `manifest.json version "${manifestVersion}" does not match the release tag "${tag}".`,
             severity: 'warning',
+            status: 'failed',
+            coverage: 'partial',
             check: 'release'
         });
     }
@@ -115256,16 +116844,24 @@ async function attestBuildArtifacts(workspacePath, projectType) {
     const subjects = collectSubjects(workspacePath, projectType);
     if (subjects.length === 0) {
         results.push({
+            ruleId: 'release-attestation-no-artifacts',
+            enforcement: 'policy',
             message: 'No artifacts found to attest.',
             severity: 'warning',
+            status: 'failed',
+            coverage: 'partial',
             check: 'release'
         });
         return results;
     }
     if (!process.env.ACTIONS_ID_TOKEN_REQUEST_URL) {
         results.push({
+            ruleId: 'release-attestation-missing-id-token',
+            enforcement: 'policy',
             message: 'Missing id-token permission. Add "permissions: id-token: write" to your workflow.',
             severity: 'warning',
+            status: 'failed',
+            coverage: 'partial',
             check: 'release'
         });
         return results;
@@ -115273,8 +116869,12 @@ async function attestBuildArtifacts(workspacePath, projectType) {
     const token = process.env.GITHUB_TOKEN ?? '';
     if (!token) {
         results.push({
+            ruleId: 'release-attestation-missing-token',
+            enforcement: 'policy',
             message: 'GITHUB_TOKEN not set. Attestation requires a token with attestations:write permission.',
             severity: 'warning',
+            status: 'failed',
+            coverage: 'partial',
             check: 'release'
         });
         return results;
@@ -115300,8 +116900,12 @@ async function attestBuildArtifacts(workspacePath, projectType) {
     catch (error) {
         const message = error instanceof Error ? error.message : String(error);
         results.push({
+            ruleId: 'release-attestation-failed',
+            enforcement: 'policy',
             message: `Attestation failed: ${message}. Ensure the workflow has id-token:write and attestations:write permissions.`,
             severity: 'warning',
+            status: 'failed',
+            coverage: 'partial',
             check: 'release'
         });
     }
@@ -115312,8 +116916,12 @@ async function createDraftRelease(workspacePath, projectType) {
     const tag = getTagFromRef();
     if (!tag) {
         results.push({
+            ruleId: 'release-tag-required',
+            enforcement: 'correctness',
             message: 'Cannot create release: not triggered by a tag push (GITHUB_REF does not start with refs/tags/).',
             severity: 'error',
+            status: 'failed',
+            coverage: 'partial',
             check: 'release'
         });
         return results;
@@ -115341,8 +116949,12 @@ async function createDraftRelease(workspacePath, projectType) {
     });
     if (exitCode !== 0) {
         results.push({
+            ruleId: 'release-draft-creation-failed',
+            enforcement: 'correctness',
             message: `Failed to create draft release (exit code ${exitCode}).`,
             severity: 'error',
+            status: 'failed',
+            coverage: 'partial',
             check: 'release'
         });
     }
@@ -115356,6 +116968,114 @@ async function createDraftRelease(workspacePath, projectType) {
     return results;
 }
 
+const DEFERRED_PLUGIN_CHECKS = [
+    [
+        'plugin-releases',
+        'Published release and build verification require release metadata'
+    ],
+    ['plugin-network', 'partial — advisory, authoritative scan runs at release'],
+    ['plugin-behavior', 'partial — advisory, authoritative scan runs at release'],
+    ['plugin-es5', 'partial — advisory, authoritative scan runs at release'],
+    ['plugin-obfuscation', 'Private thresholds; only partial parity is possible'],
+    ['plugin-wasm', 'partial — advisory, authoritative scan runs at release'],
+    ['plugin-funding', 'Analyzes the published main.js bundle']
+];
+const ACTION_VERSION = '1.0.0';
+const CATALOG_VERSION = 'eslint-plugin-obsidianmd@0.4.1; local-rules@1';
+function escapeCell(value) {
+    return value.replaceAll('|', '\\|').replaceAll('\n', ' ');
+}
+function locationText(finding) {
+    if (!finding.location)
+        return '—';
+    const line = finding.location.startLine
+        ? `:${finding.location.startLine}`
+        : '';
+    return `${finding.location.file}${line}`;
+}
+function remediation(finding) {
+    if (finding.helpUrl) {
+        return `[Documentation](${finding.helpUrl})`;
+    }
+    return finding.helpMessage ?? '—';
+}
+async function writeJobSummary(findings, mode, projectType, strict) {
+    const failed = findings.filter((finding) => finding.status === 'failed');
+    const errors = failed.filter((finding) => finding.severity === 'error').length;
+    const warnings = failed.filter((finding) => finding.severity === 'warning').length;
+    const recommendations = failed.filter((finding) => finding.severity === 'recommendation').length;
+    const inconclusive = findings.filter((finding) => finding.status === 'inconclusive').length;
+    const overall = errors > 0 ? 'Failed' : inconclusive > 0 ? 'Inconclusive' : 'Passed';
+    let markdown = '# Obsidian workflow results\n\n';
+    markdown += strict
+        ? '**Strict mode:** policy enforcement is active; policy errors fail the build.\n\n'
+        : '**Advisory mode:** policy findings are reported as warnings. Set `strict: true` to fail the build on them.\n\n';
+    markdown += `**Overall:** ${overall} · **Errors:** ${errors} · **Warnings:** ${warnings} · **Recommendations:** ${recommendations} · **Inconclusive:** ${inconclusive}\n\n`;
+    for (const check of [...new Set(findings.map((finding) => finding.check))]) {
+        markdown += `## ${check}\n\n`;
+        markdown +=
+            '| Rule ID | Severity | Status | Location | Message | Remediation |\n';
+        markdown += '| --- | --- | --- | --- | --- | --- |\n';
+        for (const finding of findings.filter((item) => item.check === check)) {
+            markdown += `| ${escapeCell(finding.ruleId)} | ${finding.severity} | ${finding.status} | ${escapeCell(locationText(finding))} | ${escapeCell(finding.message)} | ${escapeCell(remediation(finding))} |\n`;
+        }
+        markdown += '\n';
+    }
+    markdown += '## Coverage\n\n';
+    markdown += '| Check | Coverage | Reason |\n';
+    markdown += '| --- | --- | --- |\n';
+    markdown +=
+        '| Repository and manifest checks | Checked here | Source files are available in this run |\n';
+    markdown +=
+        '| Community scanner parity | Partial | Public rules only; private heuristics are unavailable |\n';
+    if (mode === 'pr' && projectType === 'plugin') {
+        for (const [task, reason] of DEFERRED_PLUGIN_CHECKS) {
+            const coverage = reason.startsWith('partial')
+                ? 'Partial'
+                : 'Deferred to release';
+            markdown += `| ${task} | ${coverage} | ${reason} |\n`;
+        }
+    }
+    if (mode === 'pr' && projectType === 'theme') {
+        markdown +=
+            '| theme-screenshot | Deferred | requires directory submission context |\n';
+    }
+    markdown += '\n';
+    markdown +=
+        'These checks mirror a subset of the community directory scanner. Passing here does **not** guarantee directory acceptance.';
+    if (mode === 'pr' && projectType === 'plugin') {
+        markdown +=
+            ' Some checks remain fully deferred until a published release exists.';
+    }
+    else if (mode === 'pr') {
+        markdown += ' Release-only checks did not run.';
+    }
+    markdown += '\n\n';
+    markdown += `Action version: ${ACTION_VERSION} · Rule-catalog version: ${CATALOG_VERSION}\n`;
+    summary.addRaw(markdown);
+    await summary.write();
+}
+
+const PR_PASS_MESSAGE = "All checks in this Action's PR scope passed. Release-only checks did not run.";
+const ADVISORY_HELP = 'Advisory only: set `strict: true` to enforce this policy finding.';
+function applyEnforcement(findings, strict) {
+    if (strict)
+        return findings;
+    return findings.map((finding) => {
+        if (finding.enforcement !== 'policy' ||
+            finding.severity !== 'error' ||
+            finding.status !== 'failed') {
+            return finding;
+        }
+        return {
+            ...finding,
+            severity: 'warning',
+            helpMessage: finding.helpMessage
+                ? `${finding.helpMessage} ${ADVISORY_HELP}`
+                : ADVISORY_HELP
+        };
+    });
+}
 function parseInputs() {
     const typeRaw = getInput('type') || 'auto';
     if (typeRaw !== 'plugin' && typeRaw !== 'theme' && typeRaw !== 'auto') {
@@ -115376,6 +117096,7 @@ function parseInputs() {
         build: getInput('build') || '',
         lint: getInput('lint') !== 'false',
         scannerLint: getInput('scanner-lint') === 'true',
+        strict: getInput('strict') === 'true',
         nodeVersion
     };
 }
@@ -115387,15 +117108,28 @@ async function run() {
         const projectType = detectProjectType(workspacePath, inputs.type);
         setOutput('type', projectType);
         info(`Project type: ${projectType}`);
+        startGroup('Registry checks');
+        const registry = await inspectRegistry(workspacePath, projectType);
+        allResults.push(...registry.findings);
+        endGroup();
         startGroup('Manifest validation');
-        allResults.push(...validateManifest(workspacePath, projectType));
+        allResults.push(...validateManifest(workspacePath, projectType, registry.immutableIdentifierExempt));
         endGroup();
         startGroup('Repository checks');
         allResults.push(...checkReadme(workspacePath));
         allResults.push(...checkLicense(workspacePath));
         endGroup();
+        startGroup('Repository metadata');
+        allResults.push(...(await checkRepositoryMetadata()));
+        endGroup();
+        startGroup('Dependency checks');
+        allResults.push(...checkDependencies(workspacePath));
+        endGroup();
         startGroup('Build');
         allResults.push(...(await runBuild(workspacePath, projectType, inputs.build)));
+        endGroup();
+        startGroup('Artifact preflight');
+        allResults.push(...checkArtifactBundle(workspacePath, projectType));
         endGroup();
         if (inputs.lint) {
             startGroup('Lint');
@@ -115407,21 +117141,25 @@ async function run() {
             allResults.push(...validateReleaseAssets(workspacePath, projectType));
             allResults.push(...validateManifestConsistency(workspacePath));
             endGroup();
-            const hasErrors = allResults.some((r) => r.severity === 'error');
+        }
+        const effectiveResults = applyEnforcement(allResults, inputs.strict);
+        if (inputs.mode === 'release') {
+            const hasErrors = effectiveResults.some((result) => result.status === 'failed' && result.severity === 'error');
             if (hasErrors) {
                 error$5('Validation errors found. Skipping attestation and release creation.');
             }
             else {
                 startGroup('Attestation');
-                allResults.push(...(await attestBuildArtifacts(workspacePath, projectType)));
+                effectiveResults.push(...(await attestBuildArtifacts(workspacePath, projectType)));
                 endGroup();
                 startGroup('Draft release');
-                allResults.push(...(await createDraftRelease(workspacePath, projectType)));
+                effectiveResults.push(...(await createDraftRelease(workspacePath, projectType)));
                 endGroup();
             }
         }
-        reportResults(allResults);
-        const hasErrors = allResults.some((r) => r.severity === 'error');
+        reportResults(effectiveResults, workspacePath, inputs.mode);
+        await writeJobSummary(effectiveResults, inputs.mode, projectType, inputs.strict);
+        const hasErrors = effectiveResults.some((result) => result.status === 'failed' && result.severity === 'error');
         setOutput('validation-passed', (!hasErrors).toString());
         if (hasErrors) {
             setFailed('Validation failed. See the errors above for details.');
@@ -115432,27 +117170,51 @@ async function run() {
             setFailed(error.message);
     }
 }
-function reportResults(results) {
+function reportResults(results, workspacePath, mode) {
     if (results.length === 0) {
-        info('All checks passed.');
+        info(mode === 'pr'
+            ? PR_PASS_MESSAGE
+            : "All checks in this Action's release scope passed.");
         return;
     }
     for (const result of results) {
+        if (result.status === 'passed' || result.status === 'skipped')
+            continue;
+        const location = result.location
+            ? {
+                file: path$2.isAbsolute(result.location.file)
+                    ? path$2.relative(workspacePath, result.location.file)
+                    : path$2.normalize(result.location.file),
+                startLine: result.location.startLine,
+                endLine: result.location.endLine,
+                startColumn: result.location.startColumn,
+                endColumn: result.location.endColumn,
+                title: `${result.check}: ${result.ruleId}`
+            }
+            : { title: `${result.check}: ${result.ruleId}` };
+        const message = `[${result.check}] ${result.message}`;
         switch (result.severity) {
             case 'error':
-                error$5(`[${result.check}] ${result.message}`);
+                error$5(message, location);
                 break;
             case 'warning':
-                warning(`[${result.check}] ${result.message}`);
+                warning(message, location);
                 break;
-            case 'info':
-                info(`[${result.check}] ${result.message}`);
+            case 'recommendation':
+                notice(message, location);
                 break;
         }
     }
-    const errors = results.filter((r) => r.severity === 'error').length;
-    const warnings = results.filter((r) => r.severity === 'warning').length;
-    info(`Summary: ${errors} error(s), ${warnings} warning(s)`);
+    const failed = results.filter((result) => result.status === 'failed');
+    const errors = failed.filter((result) => result.severity === 'error').length;
+    const warnings = failed.filter((result) => result.severity === 'warning').length;
+    const recommendations = failed.filter((result) => result.severity === 'recommendation').length;
+    if (errors === 0) {
+        info(mode === 'pr'
+            ? PR_PASS_MESSAGE
+            : "All checks in this Action's release scope passed.");
+    }
+    info(`Summary: ${errors} error(s), ${warnings} warning(s), ${recommendations} recommendation(s)`);
 }
 
 run();
