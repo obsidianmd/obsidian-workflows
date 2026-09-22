@@ -217,6 +217,12 @@ const SAMPLE_PLUGIN_PHRASES = [
   'releasing new releases'
 ]
 
+// Both classes exclude their own opening delimiter. Allowing it lets a run of
+// "![![![" or "<img<img" restart the match at every offset and rescan the rest
+// of the README each time, which is quadratic.
+const MARKDOWN_IMAGE_REGEX = /!\[[^\]\n[]*\]\([^)\n(]*\)/g
+const IMG_TAG_REGEX = /<img\b[^><]*>/gi
+
 const README_PLACEHOLDER_REGEX =
   /\b(?:TODO|FIXME)\b|<your|yourusername|plugin-name|lorem ipsum/i
 
@@ -251,9 +257,9 @@ function readableText(content: string): string {
     .replace(/```[\s\S]*?```|~~~[\s\S]*?~~~/g, '')
     .replace(/^ {4}.*$/gm, '')
     .replace(/`[^`]*`/g, '')
-    .replace(/!\[[^\]]*\]\([^)]*\)/g, '')
-    .replace(/<img\b[^>]*>/gi, '')
-    .replace(/<[^>]+>/g, '')
+    .replace(MARKDOWN_IMAGE_REGEX, '')
+    .replace(IMG_TAG_REGEX, '')
+    .replace(/<[^><]+>/g, '')
     .replace(/[#>*_~[\]()-]/g, ' ')
     .replace(/\s+/g, ' ')
     .trim()
@@ -338,8 +344,8 @@ export function checkReadme(workspacePath: string): Finding[] {
   }
 
   const imageCount =
-    (content.match(/!\[[^\]]*\]\([^)]*\)/g)?.length ?? 0) +
-    (content.match(/<img\b[^>]*>/gi)?.length ?? 0)
+    (content.match(MARKDOWN_IMAGE_REGEX)?.length ?? 0) +
+    (content.match(IMG_TAG_REGEX)?.length ?? 0)
   const text = readableText(content)
   if (imageCount >= 2 && text.length < 150) {
     results.push({
