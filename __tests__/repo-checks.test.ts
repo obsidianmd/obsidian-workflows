@@ -175,6 +175,37 @@ ${'Additional documentation. '.repeat(10)}`
     fs.rmSync(dir, { recursive: true })
   })
 
+  it.each([
+    ['balanced parentheses in the destination', '![One](img/a_(dark).png)'],
+    ['nested brackets in the label', '![A[one]](img/a.png)'],
+    [
+      'an image nested inside a link',
+      '[![One](img/a.png)](https://example.com)'
+    ]
+  ])('counts a markdown image with %s', (_label, image) => {
+    const dir = createTempDir()
+    fs.writeFileSync(
+      path.join(dir, 'README.md'),
+      `# Gallery\n\n${image}\n\n<img src="two.png">`
+    )
+    const results = checkReadme(dir)
+    expect(results).toContainEqual(
+      expect.objectContaining({ ruleId: 'readme-screenshots-only' })
+    )
+    fs.rmSync(dir, { recursive: true })
+  })
+
+  it('scans a README of unbalanced markdown delimiters quickly', () => {
+    const dir = createTempDir()
+    fs.writeFileSync(path.join(dir, 'README.md'), '!['.repeat(400_000))
+
+    const startedAt = Date.now()
+    checkReadme(dir)
+
+    expect(Date.now() - startedAt).toBeLessThan(5_000)
+    fs.rmSync(dir, { recursive: true })
+  })
+
   it('does not flag a README with only one image as screenshots-only', () => {
     const dir = createTempDir()
     fs.writeFileSync(

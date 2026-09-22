@@ -217,11 +217,81 @@ const SAMPLE_PLUGIN_PHRASES = [
   'releasing new releases'
 ]
 
-// Both classes exclude their own opening delimiter. Allowing it lets a run of
-// "![![![" or "<img<img" restart the match at every offset and rescan the rest
-// of the README each time, which is quadratic.
-const MARKDOWN_IMAGE_REGEX = /!\[[^\]\n[]*\]\([^)\n(]*\)/g
+// The class excludes its own opening delimiter. Allowing it lets a run of
+// "<img<img" restart the match at every offset and rescan the rest of the
+// README each time, which is quadratic.
 const IMG_TAG_REGEX = /<img\b[^><]*>/gi
+
+interface MarkdownSpan {
+  readonly start: number
+  readonly end: number
+}
+
+// A regex cannot match balanced delimiters, and the narrow character classes one
+// needs to stay linear silently drop valid Markdown such as `![x](a_(b).png)` or
+// `![a[b]](c.png)`. Two delimiter passes plus one scan are linear and handle
+// nesting and escapes.
+function matchingDelimiters(
+  content: string,
+  open: string,
+  close: string
+): Map<number, number> {
+  const pairs = new Map<number, number>()
+  const stack: number[] = []
+
+  for (let index = 0; index < content.length; index++) {
+    const character = content[index]
+    if (character === '\\') {
+      index++
+    } else if (character === open) {
+      stack.push(index)
+    } else if (character === close) {
+      const start = stack.pop()
+      if (start !== undefined) pairs.set(start, index)
+    }
+  }
+
+  return pairs
+}
+
+function markdownImages(content: string): MarkdownSpan[] {
+  const labels = matchingDelimiters(content, '[', ']')
+  const destinations = matchingDelimiters(content, '(', ')')
+  const images: MarkdownSpan[] = []
+
+  for (let index = 1; index < content.length; index++) {
+    if (content[index] !== '[' || content[index - 1] !== '!') continue
+
+    const labelEnd = labels.get(index)
+    if (labelEnd === undefined || content[labelEnd + 1] !== '(') continue
+
+    const destinationEnd = destinations.get(labelEnd + 1)
+    if (destinationEnd === undefined) continue
+
+    images.push({ start: index - 1, end: destinationEnd + 1 })
+  }
+
+  return images
+}
+
+function removeMarkdownImages(content: string): string {
+  const images = markdownImages(content)
+  if (images.length === 0) return content
+
+  let result = ''
+  let cursor = 0
+
+  for (const image of images) {
+    if (image.start >= cursor) {
+      result += content.slice(cursor, image.start)
+      cursor = image.end
+    } else if (image.end > cursor) {
+      cursor = image.end
+    }
+  }
+
+  return result + content.slice(cursor)
+}
 
 const README_PLACEHOLDER_REGEX =
   /\b(?:TODO|FIXME)\b|<your|yourusername|plugin-name|lorem ipsum/i
@@ -253,11 +323,12 @@ function normalizeName(value: string): string {
 }
 
 function readableText(content: string): string {
-  return content
+  const withoutCode = content
     .replace(/```[\s\S]*?```|~~~[\s\S]*?~~~/g, '')
     .replace(/^ {4}.*$/gm, '')
     .replace(/`[^`]*`/g, '')
-    .replace(MARKDOWN_IMAGE_REGEX, '')
+
+  return removeMarkdownImages(withoutCode)
     .replace(IMG_TAG_REGEX, '')
     .replace(/<[^><]+>/g, '')
     .replace(/[#>*_~[\]()-]/g, ' ')
@@ -344,8 +415,7 @@ export function checkReadme(workspacePath: string): Finding[] {
   }
 
   const imageCount =
-    (content.match(MARKDOWN_IMAGE_REGEX)?.length ?? 0) +
-    (content.match(IMG_TAG_REGEX)?.length ?? 0)
+    markdownImages(content).length + (content.match(IMG_TAG_REGEX)?.length ?? 0)
   const text = readableText(content)
   if (imageCount >= 2 && text.length < 150) {
     results.push({
