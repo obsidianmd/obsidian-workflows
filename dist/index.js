@@ -31423,11 +31423,67 @@ const SAMPLE_PLUGIN_PHRASES = [
     'you can create a new obsidian plugin',
     'releasing new releases'
 ];
-// Both classes exclude their own opening delimiter. Allowing it lets a run of
-// "![![![" or "<img<img" restart the match at every offset and rescan the rest
-// of the README each time, which is quadratic.
-const MARKDOWN_IMAGE_REGEX = /!\[[^\]\n[]*\]\([^)\n(]*\)/g;
+// The class excludes its own opening delimiter. Allowing it lets a run of
+// "<img<img" restart the match at every offset and rescan the rest of the
+// README each time, which is quadratic.
 const IMG_TAG_REGEX = /<img\b[^><]*>/gi;
+// A regex cannot match balanced delimiters, and the narrow character classes one
+// needs to stay linear silently drop valid Markdown such as `![x](a_(b).png)` or
+// `![a[b]](c.png)`. Two delimiter passes plus one scan are linear and handle
+// nesting and escapes.
+function matchingDelimiters(content, open, close) {
+    const pairs = new Map();
+    const stack = [];
+    for (let index = 0; index < content.length; index++) {
+        const character = content[index];
+        if (character === '\\') {
+            index++;
+        }
+        else if (character === open) {
+            stack.push(index);
+        }
+        else if (character === close) {
+            const start = stack.pop();
+            if (start !== undefined)
+                pairs.set(start, index);
+        }
+    }
+    return pairs;
+}
+function markdownImages(content) {
+    const labels = matchingDelimiters(content, '[', ']');
+    const destinations = matchingDelimiters(content, '(', ')');
+    const images = [];
+    for (let index = 1; index < content.length; index++) {
+        if (content[index] !== '[' || content[index - 1] !== '!')
+            continue;
+        const labelEnd = labels.get(index);
+        if (labelEnd === undefined || content[labelEnd + 1] !== '(')
+            continue;
+        const destinationEnd = destinations.get(labelEnd + 1);
+        if (destinationEnd === undefined)
+            continue;
+        images.push({ start: index - 1, end: destinationEnd + 1 });
+    }
+    return images;
+}
+function removeMarkdownImages(content) {
+    const images = markdownImages(content);
+    if (images.length === 0)
+        return content;
+    let result = '';
+    let cursor = 0;
+    for (const image of images) {
+        if (image.start >= cursor) {
+            result += content.slice(cursor, image.start);
+            cursor = image.end;
+        }
+        else if (image.end > cursor) {
+            cursor = image.end;
+        }
+    }
+    return result + content.slice(cursor);
+}
 const README_PLACEHOLDER_REGEX = /\b(?:TODO|FIXME)\b|<your|yourusername|plugin-name|lorem ipsum/i;
 const PROMOTIONAL_LANGUAGE_REGEX = /\b(?:amazing|awesome|best|effortless(?:ly)?|game[- ]changing|incredible|must[- ]have|powerful|revolutionary|seamless(?:ly)?|supercharge|transformative|transform|ultimate)\b/gi;
 function readManifestName(workspacePath) {
@@ -31451,11 +31507,11 @@ function normalizeName(value) {
         .trim();
 }
 function readableText(content) {
-    return content
+    const withoutCode = content
         .replace(/```[\s\S]*?```|~~~[\s\S]*?~~~/g, '')
         .replace(/^ {4}.*$/gm, '')
-        .replace(/`[^`]*`/g, '')
-        .replace(MARKDOWN_IMAGE_REGEX, '')
+        .replace(/`[^`]*`/g, '');
+    return removeMarkdownImages(withoutCode)
         .replace(IMG_TAG_REGEX, '')
         .replace(/<[^><]+>/g, '')
         .replace(/[#>*_~[\]()-]/g, ' ')
@@ -31531,8 +31587,7 @@ function checkReadme(workspacePath) {
             check: 'readme'
         });
     }
-    const imageCount = (content.match(MARKDOWN_IMAGE_REGEX)?.length ?? 0) +
-        (content.match(IMG_TAG_REGEX)?.length ?? 0);
+    const imageCount = markdownImages(content).length + (content.match(IMG_TAG_REGEX)?.length ?? 0);
     const text = readableText(content);
     if (imageCount >= 2 && text.length < 150) {
         results.push({
