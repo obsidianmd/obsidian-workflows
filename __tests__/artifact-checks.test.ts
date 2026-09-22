@@ -58,6 +58,24 @@ describe('artifact preflight', () => {
     expect(findings[3].message.match(/api\.example\.com/g)).toHaveLength(1)
   })
 
+  it('scans bundles containing a large inline base64 payload', () => {
+    existsSyncMock.mockImplementation(
+      (file) => file === path.join('/workspace', 'main.js')
+    )
+    readFileSyncMock.mockReturnValue(
+      `const mod = load("AGFzbQEAAAA${'A'.repeat(600_000)}")\n` +
+        'const parser = await import("./web-tree-sitter.wasm")'
+    )
+
+    const startedAt = Date.now()
+    const findings = checkArtifactBundle('/workspace', 'plugin')
+
+    expect(Date.now() - startedAt).toBeLessThan(5_000)
+    expect(
+      findings.find(({ ruleId }) => ruleId === 'bundle-wasm-reference')?.message
+    ).toContain('./web-tree-sitter.wasm')
+  })
+
   it('caps the deduplicated external domain list at twenty', () => {
     existsSyncMock.mockImplementation(
       (file) => file === path.join('/workspace', 'main.js')

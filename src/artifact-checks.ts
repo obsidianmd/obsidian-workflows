@@ -9,6 +9,7 @@ const BUNDLE_LOCATIONS = [
   'out/main.js'
 ]
 const DOMAIN_LIMIT = 20
+const PATH_BOUNDARY = /[\s"'`\\)\]}>,;]/
 const HELP_MESSAGE =
   'This is an advisory preflight check; the authoritative scan runs at release against the published bundle. main.js bundles dependencies, so this finding may originate from a third-party package rather than the author’s own source.'
 
@@ -38,6 +39,21 @@ function findBundle(workspacePath: string): string | null {
       return relativePath
   }
   return null
+}
+
+// Anchored on the ".wasm" literal and expanded backwards. A leading unbounded
+// character class backtracks quadratically across the long unbroken runs that
+// inline base64 payloads produce, which stalls the check for tens of minutes.
+function collectWasmReferences(bundle: string): string[] {
+  const references = new Set<string>()
+
+  for (const match of bundle.matchAll(/\.wasm\b/gi)) {
+    let start = match.index
+    while (start > 0 && !PATH_BOUNDARY.test(bundle[start - 1])) start -= 1
+    references.add(bundle.slice(start, match.index + match[0].length))
+  }
+
+  return [...references].slice(0, DOMAIN_LIMIT)
 }
 
 function externalDomains(bundle: string): string[] {
@@ -113,9 +129,7 @@ export function checkArtifactBundle(
     )
   }
 
-  const wasmReferences = [
-    ...new Set(bundle.match(/[^\s"'`\\)\]}>,;]+\.wasm\b/gi) ?? [])
-  ].slice(0, DOMAIN_LIMIT)
+  const wasmReferences = collectWasmReferences(bundle)
   if (wasmReferences.length > 0) {
     results.push(
       finding(
