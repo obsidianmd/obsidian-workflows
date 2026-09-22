@@ -14,7 +14,7 @@ const DEFERRED_PLUGIN_CHECKS = [
   ['plugin-funding', 'Analyzes the published main.js bundle']
 ] as const
 
-export const ACTION_VERSION = '1.2.2'
+export const ACTION_VERSION = '1.2.3'
 const CATALOG_VERSION = 'eslint-plugin-obsidianmd@0.4.1; local-rules@1'
 
 function escapeCell(value: string): string {
