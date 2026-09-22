@@ -493,7 +493,7 @@ async function runScannerStylelint(
 
     try {
       const stylelintJson =
-        output.stderr.match(/^\s*(\[.*\])\s*$/m)?.[1] ?? output.stdout
+        output.stderr.match(/^[ \t]*(\[.*\])[ \t]*$/m)?.[1] ?? output.stdout
       const findings = parseStylelintOutput(stylelintJson, workspacePath)
       if (findings.length > 0) return findings
       if (output.exitCode === 0) {
