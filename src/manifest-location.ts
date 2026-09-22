@@ -2,6 +2,16 @@ import * as fs from 'node:fs'
 import * as path from 'node:path'
 import type { Finding } from './types.js'
 
+const UNKNOWN_FIELD_MARKER = 'unknown field: '
+
+function unknownFieldName(message: string): string | undefined {
+  const start = message.indexOf(UNKNOWN_FIELD_MARKER)
+  if (start === -1) return undefined
+
+  const field = message.slice(start + UNKNOWN_FIELD_MARKER.length)
+  return field.endsWith('.') ? field.slice(0, -1) : undefined
+}
+
 function fieldForFinding(finding: Finding): string | undefined {
   if (finding.ruleId.startsWith('manifest-description-')) return 'description'
 
@@ -24,7 +34,7 @@ function fieldForFinding(finding: Finding): string | undefined {
     case 'manifest-is-desktop-only-type':
       return 'isDesktopOnly'
     case 'manifest-unknown-field':
-      return finding.message.match(/unknown field: (.*)\.$/)?.[1]
+      return unknownFieldName(finding.message)
     case 'manifest-invalid-semver':
     case 'manifest-url-invalid':
     case 'manifest-url-non-https':

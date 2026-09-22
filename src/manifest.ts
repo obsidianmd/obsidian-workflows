@@ -41,7 +41,10 @@ const PLUGIN_MANIFEST_FIELDS = new Set([
 
 const PLUGIN_RECOMMENDED_FIELDS = ['author', 'minAppVersion', 'isDesktopOnly']
 
-const EMAIL_REGEX = /\b[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}\b/i
+// The lookbehind pins the local part to a run boundary. A leading \b lets the
+// match restart at every offset inside a long run, which backtracks quadratically
+// on an oversized author field.
+const EMAIL_REGEX = /(?<![A-Z0-9._%+-])[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}\b/i
 const HTTP_URL_REGEX = /https?:\/\/\S+/i
 
 function validateSemver(version: string, field: string): Finding[] {
