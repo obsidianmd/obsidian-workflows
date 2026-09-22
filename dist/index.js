@@ -30487,6 +30487,14 @@ function detectProjectType(workspacePath, explicitType) {
         'and no theme.css found (not a theme). Set the `type` input to "plugin" or "theme" explicitly.');
 }
 
+const UNKNOWN_FIELD_MARKER = 'unknown field: ';
+function unknownFieldName(message) {
+    const start = message.indexOf(UNKNOWN_FIELD_MARKER);
+    if (start === -1)
+        return undefined;
+    const field = message.slice(start + UNKNOWN_FIELD_MARKER.length);
+    return field.endsWith('.') ? field.slice(0, -1) : undefined;
+}
 function fieldForFinding(finding) {
     if (finding.ruleId.startsWith('manifest-description-'))
         return 'description';
@@ -30509,7 +30517,7 @@ function fieldForFinding(finding) {
         case 'manifest-is-desktop-only-type':
             return 'isDesktopOnly';
         case 'manifest-unknown-field':
-            return finding.message.match(/unknown field: (.*)\.$/)?.[1];
+            return unknownFieldName(finding.message);
         case 'manifest-invalid-semver':
         case 'manifest-url-invalid':
         case 'manifest-url-non-https':
@@ -30571,7 +30579,10 @@ const PLUGIN_MANIFEST_FIELDS = new Set([
     'isDesktopOnly'
 ]);
 const PLUGIN_RECOMMENDED_FIELDS = ['author', 'minAppVersion', 'isDesktopOnly'];
-const EMAIL_REGEX = /\b[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}\b/i;
+// The lookbehind pins the local part to a run boundary. A leading \b lets the
+// match restart at every offset inside a long run, which backtracks quadratically
+// on an oversized author field.
+const EMAIL_REGEX = /(?<![A-Z0-9._%+-])[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}\b/i;
 const HTTP_URL_REGEX = /https?:\/\/\S+/i;
 function validateSemver(version, field) {
     if (!SEMVER_REGEX.test(version)) {
@@ -31412,6 +31423,11 @@ const SAMPLE_PLUGIN_PHRASES = [
     'you can create a new obsidian plugin',
     'releasing new releases'
 ];
+// Both classes exclude their own opening delimiter. Allowing it lets a run of
+// "![![![" or "<img<img" restart the match at every offset and rescan the rest
+// of the README each time, which is quadratic.
+const MARKDOWN_IMAGE_REGEX = /!\[[^\]\n[]*\]\([^)\n(]*\)/g;
+const IMG_TAG_REGEX = /<img\b[^><]*>/gi;
 const README_PLACEHOLDER_REGEX = /\b(?:TODO|FIXME)\b|<your|yourusername|plugin-name|lorem ipsum/i;
 const PROMOTIONAL_LANGUAGE_REGEX = /\b(?:amazing|awesome|best|effortless(?:ly)?|game[- ]changing|incredible|must[- ]have|powerful|revolutionary|seamless(?:ly)?|supercharge|transformative|transform|ultimate)\b/gi;
 function readManifestName(workspacePath) {
@@ -31439,9 +31455,9 @@ function readableText(content) {
         .replace(/```[\s\S]*?```|~~~[\s\S]*?~~~/g, '')
         .replace(/^ {4}.*$/gm, '')
         .replace(/`[^`]*`/g, '')
-        .replace(/!\[[^\]]*\]\([^)]*\)/g, '')
-        .replace(/<img\b[^>]*>/gi, '')
-        .replace(/<[^>]+>/g, '')
+        .replace(MARKDOWN_IMAGE_REGEX, '')
+        .replace(IMG_TAG_REGEX, '')
+        .replace(/<[^><]+>/g, '')
         .replace(/[#>*_~[\]()-]/g, ' ')
         .replace(/\s+/g, ' ')
         .trim();
@@ -31515,8 +31531,8 @@ function checkReadme(workspacePath) {
             check: 'readme'
         });
     }
-    const imageCount = (content.match(/!\[[^\]]*\]\([^)]*\)/g)?.length ?? 0) +
-        (content.match(/<img\b[^>]*>/gi)?.length ?? 0);
+    const imageCount = (content.match(MARKDOWN_IMAGE_REGEX)?.length ?? 0) +
+        (content.match(IMG_TAG_REGEX)?.length ?? 0);
     const text = readableText(content);
     if (imageCount >= 2 && text.length < 150) {
         results.push({
@@ -65512,7 +65528,7 @@ async function runScannerStylelint(workspacePath, projectType, minAppVersion) {
             }
         });
         try {
-            const stylelintJson = output.stderr.match(/^\s*(\[.*\])\s*$/m)?.[1] ?? output.stdout;
+            const stylelintJson = output.stderr.match(/^[ \t]*(\[.*\])[ \t]*$/m)?.[1] ?? output.stdout;
             const findings = parseStylelintOutput(stylelintJson, workspacePath);
             if (findings.length > 0)
                 return findings;
