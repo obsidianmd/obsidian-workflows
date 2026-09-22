@@ -6,6 +6,7 @@ import typescriptEslint from '@typescript-eslint/eslint-plugin'
 import tsParser from '@typescript-eslint/parser'
 import jest from 'eslint-plugin-jest'
 import prettier from 'eslint-plugin-prettier'
+import redos from 'eslint-plugin-redos'
 import globals from 'globals'
 
 const compat = new FlatCompat({
@@ -29,6 +30,7 @@ export default [
     plugins: {
       jest,
       prettier,
+      redos,
       '@typescript-eslint': typescriptEslint
     },
 
@@ -77,7 +79,8 @@ export default [
       'no-console': 'off',
       'no-shadow': 'off',
       'no-unused-vars': 'off',
-      'prettier/prettier': 'error'
+      'prettier/prettier': 'error',
+      'redos/no-vulnerable': 'error'
     }
   }
 ]
