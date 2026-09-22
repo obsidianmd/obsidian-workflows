@@ -117003,7 +117003,7 @@ const DEFERRED_PLUGIN_CHECKS = [
     ['plugin-wasm', 'partial — advisory, authoritative scan runs at release'],
     ['plugin-funding', 'Analyzes the published main.js bundle']
 ];
-const ACTION_VERSION = '1.2.1';
+const ACTION_VERSION = '1.2.2';
 const CATALOG_VERSION = 'eslint-plugin-obsidianmd@0.4.1; local-rules@1';
 function escapeCell(value) {
     return value.replaceAll('|', '\\|').replaceAll('\n', ' ');
