@@ -279,6 +279,17 @@ export function resolveEslintHelpUrl(
   return typeof url === 'string' && url.length > 0 ? url : undefined
 }
 
+const MISSING_RULE_DEFINITION =
+  /^Definition for rule '([^']+)' was not found\.?$/
+
+// ESLint reports a disable directive or inline config comment naming a rule the
+// scanner does not load as an ordinary message carrying that rule's id. It is not
+// a finding of that rule, which never ran.
+function isMissingRuleDefinition(ruleId: string, message: unknown): boolean {
+  if (typeof message !== 'string') return false
+  return MISSING_RULE_DEFINITION.exec(message)?.[1] === ruleId
+}
+
 export function parseEslintOutput(
   stdout: string,
   workspacePath: string,
@@ -295,9 +306,15 @@ export function parseEslintOutput(
     for (const entry of messages) {
       if (!isRecord(entry)) continue
       const ruleId = typeof entry.ruleId === 'string' ? entry.ruleId : null
-      const fatal = entry.fatal === true || ruleId === null
+      const executionRuleId =
+        entry.fatal === true || ruleId === null
+          ? 'eslint-execution-failure'
+          : isMissingRuleDefinition(ruleId, entry.message)
+            ? 'eslint-unknown-rule-directive'
+            : undefined
+      const fatal = executionRuleId !== undefined
       findings.push({
-        ruleId: fatal ? 'eslint-execution-failure' : ruleId,
+        ruleId: executionRuleId ?? ruleId ?? 'eslint-execution-failure',
         enforcement: 'policy',
         check: 'scanner-eslint',
         message:

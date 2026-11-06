@@ -217,6 +217,82 @@ describe('ESLint findings', () => {
     })
   })
 
+  it('treats disable directives naming unloaded rules as inconclusive', () => {
+    // Output of ESLint 9.37.0 for a next-line disable of a rule the scanner
+    // does not load, placed above a real no-eval violation.
+    const findings = parseEslintOutput(
+      JSON.stringify([
+        {
+          filePath: path.join(workspace, 'main.ts'),
+          messages: [
+            {
+              ruleId: 'typescript-dev-toolkit/readonly-interface-members',
+              message:
+                "Definition for rule 'typescript-dev-toolkit/readonly-interface-members' was not found.",
+              line: 1,
+              column: 1,
+              endLine: 1,
+              endColumn: 104,
+              severity: 2,
+              nodeType: null
+            },
+            {
+              ruleId: 'no-eval',
+              severity: 2,
+              message: 'eval can be harmful.',
+              line: 2,
+              column: 1,
+              nodeType: 'CallExpression',
+              messageId: 'unexpected',
+              endLine: 2,
+              endColumn: 5
+            }
+          ]
+        }
+      ]),
+      workspace
+    )
+    expect(findings).toHaveLength(2)
+    expect(findings[0]).toMatchObject({
+      ruleId: 'eslint-unknown-rule-directive',
+      status: 'inconclusive',
+      severity: 'recommendation',
+      coverage: 'unavailable',
+      message:
+        "Definition for rule 'typescript-dev-toolkit/readonly-interface-members' was not found.",
+      location: { file: 'main.ts', startLine: 1 }
+    })
+    expect(findings[1]).toMatchObject({
+      ruleId: 'no-eval',
+      status: 'failed',
+      severity: 'error',
+      location: { file: 'main.ts', startLine: 2 }
+    })
+  })
+
+  it('keeps a rule finding whose message only resembles a missing definition', () => {
+    const findings = parseEslintOutput(
+      JSON.stringify([
+        {
+          filePath: path.join(workspace, 'main.ts'),
+          messages: [
+            {
+              ruleId: 'obsidianmd/detach-leaves',
+              severity: 2,
+              message: "Definition for rule 'other/rule' was not found."
+            }
+          ]
+        }
+      ]),
+      workspace
+    )
+    expect(findings[0]).toMatchObject({
+      ruleId: 'obsidianmd/detach-leaves',
+      status: 'failed',
+      severity: 'error'
+    })
+  })
+
   it('generates a config without type-aware rules when tsconfig is absent', async () => {
     const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'lint-test-'))
     fs.writeFileSync(path.join(dir, 'styles.css'), 'body {}')
